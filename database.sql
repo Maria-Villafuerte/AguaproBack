@@ -23,6 +23,45 @@ CREATE TABLE Energía (
     capacitor VARCHAR
 );
 
+-- Tabla Condiciones
+CREATE TABLE Condiciones (
+    condiciones INT PRIMARY KEY,
+    Temperatura_liquida_min DOUBLE PRECISION,
+    Temperatura_liquida_max DOUBLE PRECISION,
+    Temperatura_Ambiente DOUBLE PRECISION,
+    presion DOUBLE PRECISION
+);
+
+-- Tabla Size
+CREATE TABLE Size (
+    Size INT PRIMARY KEY,
+    min_gpm DOUBLE PRECISION,
+    max_gpm DOUBLE PRECISION
+);
+
+-- Tabla Características
+CREATE TABLE Características (
+    marca VARCHAR(50),
+    size INT,
+    material VARCHAR(50),
+    profundidad DOUBLE PRECISION,
+    conexion_tuberia VARCHAR(50),
+    presion_funcional DOUBLE PRECISION,
+    head INT,
+    flow_rate DOUBLE PRECISION,
+    aplicaciones TEXT,
+    producto INT,
+    energia INT,
+    condiciones INT,
+    temperatura_media DOUBLE PRECISION,
+    FOREIGN KEY (size) REFERENCES Size(Size),
+    FOREIGN KEY (producto) REFERENCES Productos(id_producto),
+    FOREIGN KEY (energia) REFERENCES Energía(energia),
+    FOREIGN KEY (condiciones) REFERENCES Condiciones(condiciones)
+);
+
+
+
 -- Tabla Clientes
 CREATE TABLE Clientes (
     id_cliente INT PRIMARY KEY,
