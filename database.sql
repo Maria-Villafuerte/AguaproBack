@@ -101,3 +101,10 @@ CREATE TABLE Servicio (
     descripcion TEXT
 );
 
+-- Tabla Codigo
+CREATE TABLE Codigos_descuento (
+	id_codigo INT PRIMARY KEY,
+	codigo VARCHAR(10),
+	usado INT,
+	descuento DOUBLE PRECISION,
+)
