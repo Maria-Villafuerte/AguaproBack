@@ -108,3 +108,13 @@ CREATE TABLE Codigos_descuento (
 	usado INT,
 	descuento DOUBLE PRECISION,
 )
+
+-- Tabla Recuento
+-- Para que nos sirva como intermediario entre pedidos y productos, por si acaso se compra 2 productos del mismo tipo en el mismo pedido.
+CREATE TABLE Recuento (
+    Pedido_Fk INT,
+    Producto_Fk INT,
+    Cantidad INT,
+    FOREIGN KEY (Pedido_Fk) REFERENCES pedidos(id_pedido),
+    FOREIGN KEY (Producto_Fk) REFERENCES productos(id_producto)
+);
