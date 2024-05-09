@@ -80,7 +80,6 @@ CREATE TABLE Tipos_estados (
 -- Tabla Pedidos
 CREATE TABLE Pedidos (
     id_pedido INT PRIMARY KEY,
-    monto_total DOUBLE PRECISION,
     estatus INT,
     FOREIGN KEY (estatus) REFERENCES Tipos_estados(id_estado)
 );
@@ -90,8 +89,11 @@ CREATE TABLE Factura (
     id_cliente INT,
     id_pedido INT,
     nit_empresa VARCHAR(10),
+    monto_total DOUBLE PRECISION,
+    id_descuento INT,
     FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
-    FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido)
+    FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido),
+    FOREIGN KEY (id_descuento) REFERENCES Codigos(id_codigo)
 );
 
 -- Tabla Servicio
@@ -102,12 +104,16 @@ CREATE TABLE Servicio (
 );
 
 -- Tabla Codigo
-CREATE TABLE Codigos_descuento (
-	id_codigo INT PRIMARY KEY,
-	codigo VARCHAR(10),
-	usado INT,
-	descuento DOUBLE PRECISION,
-)
+CREATE TABLE Codigos (
+    id_codigo INT PRIMARY KEY,
+    num_codigo VARCHAR(10),
+    usado INT,
+    descuento DOUBLE PRECISION,
+    fecha_vencimiento DATE,
+    validez BOOLEAN,
+    producto INT,
+    FOREIGN KEY (producto) REFERENCES Productos(id_producto)
+);
 
 -- Tabla Recuento
 -- Para que nos sirva como intermediario entre pedidos y productos, por si acaso se compra 2 productos del mismo tipo en el mismo pedido.
@@ -117,4 +123,11 @@ CREATE TABLE Recuento (
     Cantidad INT,
     FOREIGN KEY (Pedido_Fk) REFERENCES pedidos(id_pedido),
     FOREIGN KEY (Producto_Fk) REFERENCES productos(id_producto)
+);
+
+-- Tabla Descuentos
+CREATE TABLE Descuentos (
+    producto INT,
+    porcentaje DOUBLE PRECISION,
+    FOREIGN KEY (producto) REFERENCES Productos(id_producto)
 );
