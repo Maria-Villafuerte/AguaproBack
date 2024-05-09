@@ -12,6 +12,7 @@ CREATE TABLE Productos (
     precio DOUBLE PRECISION,
     disponibilidad INT,
     tipo_producto INT,
+    porcentaje_descuento DOUBLE PRECISION,
     FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
 );
 
