@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
 app.get('/productos', async (req, res) => {
     try {
-      const posts = await getPosts()
+      const posts = await getProductos()
       if (posts !== 'No posts found.') {
         res
           .status(200)
