@@ -36,6 +36,7 @@ app.get('/productos', async (req, res) => {
    }
 })
 
+//Obtener información de porducto individual
 app.get('/productos/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   try {
@@ -54,7 +55,7 @@ app.get('/productos/:productId', async (req, res) => {
 app.delete('/productos/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   try {
-    await deletePost(productId);
+    await deleteProduct(productId);
     res.sendStatus(204);
   } catch (error) {
     console.error('Error deleting product:', error);
