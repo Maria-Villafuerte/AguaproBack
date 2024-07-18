@@ -3,7 +3,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 import {
-    getProductos,
+    getProductos, getProductById, deleteProduct
   } from './db.js'
 import authenticateToken from './middleware.js'
 
