@@ -2,9 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import {
-    getProductos, getProductById, deleteProduct
-  } from './db.js'
+import { getProductos, getProductById, deleteProduct } from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -36,9 +34,10 @@ app.get('/productos', async (req, res) => {
    }
 })
 
-//Obtener información de porducto individual
+// Obtener información de producto individual
 app.get('/productos/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
+  console.log(productId)
   try {
     const product = await getProductById(productId);
     if (!product) {
@@ -49,7 +48,7 @@ app.get('/productos/:productId', async (req, res) => {
     console.error('Error fetching product by ID:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
-})
+});
 
 // Eliminar un producto
 app.delete('/productos/:productId', async (req, res) => {
