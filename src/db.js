@@ -28,3 +28,20 @@ export async function deleteProduct(productId) {
     throw error;
   }
 }
+// Crear producto
+export async function createProduct(product) {
+  const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
+  const query = `
+    INSERT INTO Productos (nombre, descripción, precio, disponibilidad, tipo_producto)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+  `;
+  const values = [nombre, descripción, precio, disponibilidad, tipo_producto];
+  try {
+    const result = await conn.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
