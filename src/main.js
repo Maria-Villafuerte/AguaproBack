@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct } from './db.js'
+import { getProductos, getProductById, deleteProduct,updateProduct } from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -58,6 +58,24 @@ app.delete('/productos/:productId', async (req, res) => {
     res.sendStatus(204);
   } catch (error) {
     console.error('Error deleting product:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Endpoint para actualizar un producto
+app.put('/productos/:productId', async (req, res) => {
+  const productId = parseInt(req.params.productId, 10);
+  const { nombre, descripción, precio, disponibilidad, tipo_producto } = req.body;
+
+  try {
+    const updated = await updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto);
+    if (!updated) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    res.status(200).json({ message: 'Product updated successfully' });
+  } catch (error) {
+    console.error('Error updating product:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
