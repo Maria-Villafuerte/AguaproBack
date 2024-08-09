@@ -16,7 +16,7 @@ app.use(cors())
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello AguaPro!');
 });
 
 app.get('/productos', async (req, res) => {
@@ -59,6 +59,24 @@ app.delete('/productos/:productId', async (req, res) => {
   } catch (error) {
     console.error('Error deleting product:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// Crear un nuevo producto
+app.post('/productos', async (req, res) => {
+  const newProduct = req.body;
+  try {
+    const createdProduct = await createProduct(newProduct);
+    return res.status(201).json({
+      status: 'success',
+      message: 'Product created successfully.',
+      data: createdProduct
+    });
+  } catch (error) {
+    console.error('Error creating product:', error);
+    return res.status(500).json({
+      status: 'failed',
+      error: 'Internal Server Error'
+    });
   }
 });
 
