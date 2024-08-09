@@ -28,6 +28,18 @@ export async function deleteProduct(productId) {
     throw error;
   }
 }
+export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
+  try {
+    const result = await conn.query(
+      'UPDATE Productos SET nombre = $1, descripción = $2, precio = $3, disponibilidad = $4, tipo_producto = $5 WHERE id_producto = $6',
+      [nombre, descripción, precio, disponibilidad, tipo_producto, productId]
+    );
+    return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
 // Crear producto
 export async function createProduct(product) {
   const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
