@@ -1,7 +1,7 @@
 import conn from './conn.js'
 
 export async function getProductos () {
-  const result = await conn.query('SELECT * FROM Productos')
+  const result = await conn.query("SELECT * FROM Productos WHERE estado = 'en venta'")
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
@@ -36,6 +36,153 @@ export async function updateProduct(productId, nombre, descripción, precio, dis
       [nombre, descripción, precio, disponibilidad, tipo_producto, productId]
     );
     return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+// Añadir datos de energía
+async function checkEnergyValue(min_hp, max_hp, capacitor) {
+  try {
+    const result = await conn.query(
+      "SELECT energia FROM Energía WHERE min_hp = $1 AND max_hp = $2 AND capacitor = $3",
+      [min_hp, max_hp, capacitor]
+    );
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'energia'
+      return result.rows[0].energia;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addEnergyValue(energia, min_hp, max_hp, capacitor) {
+  capacitor = capacitor.toLowerCase();
+  try {
+    let exists = await checkEnergyValue(min_hp, max_hp, capacitor);
+    if (exists !== 0) {
+      return "Ese dato de energía ya existe en la posición: " + exists;
+    }
+    await conn.query(
+      "INSERT INTO Energía (energia, min_hp, max_hp, capacitor) VALUES ($1, $2, $3, $4)", 
+      [energia, min_hp, max_hp, lc_capacitor]
+    );
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+
+// Añadir datos de condiciones
+async function checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
+  try {
+    const result = await conn.query(
+      `SELECT condiciones 
+       FROM Condiciones 
+       WHERE Temperatura_liquida_min = $1 
+         AND Temperatura_liquida_max = $2 
+         AND Temperatura_Ambiente = $3 
+         AND presion = $4`,
+      [Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion]
+    );
+    
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'condiciones'
+      return result.rows[0].condiciones;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addConditionValue(condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
+  try {
+    let exists = await checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
+    
+    if (exists !== 0) {
+      return "Esa combinación de condiciones ya existe en la posición: " + exists;
+    }
+    
+    await conn.query(
+      `INSERT INTO Condiciones (condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) 
+       VALUES ($1, $2, $3, $4, $5)`,
+      [condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion]
+    );
+    
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+
+// Añadir dato a size
+async function checkSizeValue(min_gpm, max_gpm) {
+  try {
+    const result = await conn.query(
+      `SELECT Size 
+       FROM Size 
+       WHERE min_gpm = $1 
+         AND max_gpm = $2`,
+      [min_gpm, max_gpm]
+    );
+    
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'Size'
+      return result.rows[0].Size;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addSizeValue(Size, min_gpm, max_gpm) {
+  try {
+    let exists = await checkSizeValue(min_gpm, max_gpm);
+    
+    if (exists !== 0) {
+      return "Esa combinación de Size ya existe en la posición: " + exists;
+    }
+    
+    await conn.query(
+      `INSERT INTO Size (Size, min_gpm, max_gpm) 
+       VALUES ($1, $2, $3)`,
+      [Size, min_gpm, max_gpm]
+    );
+    
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+//
+export async function addCaracteristicas(marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) {
+  marca = marca.toLowerCase()
+  material = material.toLowerCase()
+  conexion_tuberia = conexion_tuberia.toLowerCase()
+  aplicaciones = aplicaciones.toLowerCase()
+
+  try {
+    await conn.query(
+      `INSERT INTO Características (marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      [marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media]
+    );
+    
+    return "Creado";
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
