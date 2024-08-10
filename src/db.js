@@ -28,7 +28,6 @@ export async function deleteProduct(productId) {
     throw error;
   }
 }
-
 export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
   try {
     const result = await conn.query(
@@ -36,6 +35,23 @@ export async function updateProduct(productId, nombre, descripción, precio, dis
       [nombre, descripción, precio, disponibilidad, tipo_producto, productId]
     );
     return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+// Crear producto
+export async function createProduct(product) {
+  const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
+  const query = `
+    INSERT INTO Productos (nombre, descripción, precio, disponibilidad, tipo_producto)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+  `;
+  const values = [nombre, descripción, precio, disponibilidad, tipo_producto];
+  try {
+    const result = await conn.query(query, values);
+    return result.rows[0];
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
