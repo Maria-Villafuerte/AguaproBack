@@ -2,7 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct,updateProduct } from './db.js'
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct,
+  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas
+ } from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -50,8 +52,8 @@ app.get('/productos/:productId', async (req, res) => {
   }
 });
 
-// Eliminar un producto
-app.delete('/productos/:productId', async (req, res) => {
+// Ocultar un producto
+app.put('/productos/hide/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   try {
     await deleteProduct(productId);
@@ -61,6 +63,7 @@ app.delete('/productos/:productId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 // Crear un nuevo producto
 app.post('/productos', async (req, res) => {
   const newProduct = req.body;
@@ -100,4 +103,57 @@ app.put('/productos/:productId', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
+});
+
+//Endpoints para características
+app.post('/size', async (req, res) => {
+  const { Size, min_gpm, max_gpm } = req.body;
+
+  try {
+    const result = await addSizeValue(Size, min_gpm, max_gpm);
+    res.json({ message: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/condiciones', async (req, res) => {
+  const { condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion } = req.body;
+
+  try {
+    const result = await addConditionValue(condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
+    res.json({ message: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/energia', async (req, res) => {
+  const { energia, min_hp, max_hp, capacitor } = req.body;
+
+  try {
+    const result = await addEnergyValue(energia, min_hp, max_hp, capacitor);
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/caracteristicas', async (req, res) => {
+  const { 
+    marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+  } = req.body;
+
+  try {
+    const result = await addCaracteristicas({ 
+      marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+      head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+    });
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
 });

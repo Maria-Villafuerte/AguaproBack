@@ -22,12 +22,13 @@ export async function getProductById(productId) {
 // Eliminar producto
 export async function deleteProduct(productId) {
   try {
-    await conn.query('DELETE FROM Productos WHERE id_producto = $1', [productId]);
+    await conn.query("UPDATE Productos SET estado = 'oculto' WHERE id_producto = $1", [productId]);
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
   }
 }
+
 export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
   try {
     const result = await conn.query(
@@ -40,6 +41,7 @@ export async function updateProduct(productId, nombre, descripción, precio, dis
     throw error;
   }
 }
+
 // Crear producto
 export async function createProduct(product) {
   const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
@@ -184,7 +186,7 @@ export async function addSizeValue(Size, min_gpm, max_gpm) {
   }
 }
 
-//
+// Asocial todas las características al producto
 export async function addCaracteristicas(marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) {
   marca = marca.toLowerCase()
   material = material.toLowerCase()

@@ -15,6 +15,9 @@ CREATE TABLE Productos (
     FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
 );
 
+ALTER TABLE Productos 
+ADD COLUMN estado VARCHAR(50) NOT NULL DEFAULT 'en venta';
+
 -- Tabla Energía
 CREATE TABLE Energía (
     energia INT PRIMARY KEY,
@@ -60,8 +63,6 @@ CREATE TABLE Características (
     FOREIGN KEY (condiciones) REFERENCES Condiciones(condiciones)
 );
 
-
-
 -- Tabla Clientes
 CREATE TABLE Clientes (
     id_cliente INT PRIMARY KEY,
@@ -84,6 +85,18 @@ CREATE TABLE Pedidos (
     FOREIGN KEY (estatus) REFERENCES Tipos_estados(id_estado)
 );
 
+-- Tabla Codigo
+CREATE TABLE Codigos (
+    id_codigo INT PRIMARY KEY,
+    num_codigo VARCHAR(10),
+    usado INT,
+    descuento DOUBLE PRECISION,
+    fecha_vencimiento DATE,
+    validez BOOLEAN,
+    producto INT,
+    FOREIGN KEY (producto) REFERENCES Productos(id_producto)
+);
+
 -- Tabla Factura
 CREATE TABLE Factura (
     id_cliente INT,
@@ -101,18 +114,6 @@ CREATE TABLE Servicio (
     id_servicio INT PRIMARY KEY,
     nombre VARCHAR(50),
     descripcion TEXT
-);
-
--- Tabla Codigo
-CREATE TABLE Codigos (
-    id_codigo INT PRIMARY KEY,
-    num_codigo VARCHAR(10),
-    usado INT,
-    descuento DOUBLE PRECISION,
-    fecha_vencimiento DATE,
-    validez BOOLEAN,
-    producto INT,
-    FOREIGN KEY (producto) REFERENCES Productos(id_producto)
 );
 
 -- Tabla Recuento
