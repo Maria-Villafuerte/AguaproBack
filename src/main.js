@@ -2,8 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct,updateProduct, savePurchase,deletePurchase} from './db.js'
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase,
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase, deletePurchase, 
   addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
   getEnergia } from './db.js'
 import authenticateToken from './middleware.js'
