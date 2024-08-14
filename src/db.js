@@ -136,7 +136,6 @@ export async function deletePurchase(pedidoId) {
   }
 }
 
-=======
 // Crear producto
 export async function createProduct(product) {
   const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
