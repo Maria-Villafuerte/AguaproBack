@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct,
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase,
   addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
   getEnergia } from './db.js'
 import authenticateToken from './middleware.js'
@@ -98,6 +98,23 @@ app.put('/productos/:productId', async (req, res) => {
   } catch (error) {
     console.error('Error updating product:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// save_purchase - Crear nueva compra y guardar en la base de datos
+app.post('/save_purchase', async (req, res) => {
+  const { clienteId, productos, nitEmpresa, idDescuento } = req.body;
+
+  try {
+    const result = await savePurchase(clienteId, productos, nitEmpresa, idDescuento);
+    if (result.success) {
+      return res.status(200).json({ message: 'Compra guardada exitosamente.' });
+    } else {
+      return res.status(400).json({ error: result.message });
+    }
+  } catch (error) {
+    console.error('Error al guardar la compra:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
