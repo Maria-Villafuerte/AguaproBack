@@ -60,6 +60,22 @@ export async function createProduct(product) {
   }
 }
 
+//Ver valores de características
+export async function getSize () {
+  const result = await conn.query("SELECT * FROM Size")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+export async function getConditions () {
+  const result = await conn.query("SELECT * FROM Condiciones")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+export async function getEnergia () {
+  const result = await conn.query("SELECT * FROM Energía")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
 // Añadir datos de energía
 async function checkEnergyValue(min_hp, max_hp, capacitor) {
   try {

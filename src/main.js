@@ -3,8 +3,8 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct,
-  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas
- } from './db.js'
+  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
+  getEnergia } from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -106,6 +106,68 @@ app.listen(port, () => {
 });
 
 //Endpoints para características
+//Ver características
+app.get('/size', async (req, res) => {
+  try {
+    const posts = await getProductos()
+    if (posts !== 'No posts found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Posts retrieved successfully.', data: posts })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No posts found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/size', async (req, res) => {
+  try {
+    const sizeValues = await getSize()
+    if (sizeValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: sizeValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/condiciones', async (req, res) => {
+  try {
+    const conditionValues = await getConditions()
+    if (conditionValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: conditionValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/energia', async (req, res) => {
+  try {
+    const energyValues = await getEnergia()
+    if (energyValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: energyValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+//Añadír características
 app.post('/size', async (req, res) => {
   const {min_gpm, max_gpm } = req.body;
 
