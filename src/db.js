@@ -99,6 +99,44 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
   }
 }
 
+
+
+export async function deletePurchase(pedidoId) {
+  try {
+    await conn.query('BEGIN');
+
+    // Eliminar registros en Recuento asociados al pedido
+    await conn.query(
+      'DELETE FROM Recuento WHERE Pedido_Fk = $1',
+      [pedidoId]
+    );
+
+    // Eliminar factura asociada al pedido
+    await conn.query(
+      'DELETE FROM Factura WHERE id_pedido = $1',
+      [pedidoId]
+    );
+
+    // Eliminar el pedido
+    const deleteResult = await conn.query(
+      'DELETE FROM Pedidos WHERE id_pedido = $1 RETURNING id_pedido',
+      [pedidoId]
+    );
+
+    if (deleteResult.rowCount === 0) {
+      throw new Error('Pedido no encontrado');
+    }
+
+    await conn.query('COMMIT');
+    return { success: true, message: 'Pedido eliminado exitosamente.' };
+  } catch (error) {
+    await conn.query('ROLLBACK');
+    console.error('Error en la transacción:', error);
+    return { success: false, message: 'Error al eliminar el pedido.', error: error.message };
+  }
+}
+
+=======
 // Crear producto
 export async function createProduct(product) {
   const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;

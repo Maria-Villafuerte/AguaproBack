@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
+import { getProductos, getProductById, deleteProduct,updateProduct, savePurchase,deletePurchase} from './db.js'
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase,
   addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
   getEnergia } from './db.js'
@@ -122,6 +123,24 @@ app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
 });
 
+
+// Endpoint para eliminar un pedido
+app.delete('/delete_purchase/:pedidoId', async (req, res) => {
+  const pedidoId = parseInt(req.params.pedidoId, 10);
+
+  try {
+    const result = await deletePurchase(pedidoId);
+    if (result.success) {
+      return res.status(200).json({ message: result.message });
+    } else {
+      return res.status(400).json({ error: result.message });
+    }
+  } catch (error) {
+    console.error('Error al eliminar el pedido:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+=======
 //Endpoints para características
 //Ver características
 app.get('/size', async (req, res) => {
@@ -236,3 +255,4 @@ app.post('/caracteristicas', async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
