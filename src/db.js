@@ -28,7 +28,6 @@ export async function deleteProduct(productId) {
     throw error;
   }
 }
-
 export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
   try {
     const result = await conn.query(
@@ -41,7 +40,6 @@ export async function updateProduct(productId, nombre, descripción, precio, dis
     throw error;
   }
 }
-
 
 //Ingresar Pedidos 
 export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento) {
@@ -97,5 +95,23 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
     await conn.query('ROLLBACK');
     console.error('Error en la transacción:', error);
     return { success: false, message: 'Error al guardar la compra.', error: error.message };
+  }
+}
+
+// Crear producto
+export async function createProduct(product) {
+  const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
+  const query = `
+    INSERT INTO Productos (nombre, descripción, precio, disponibilidad, tipo_producto)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+  `;
+  const values = [nombre, descripción, precio, disponibilidad, tipo_producto];
+  try {
+    const result = await conn.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
   }
 }
