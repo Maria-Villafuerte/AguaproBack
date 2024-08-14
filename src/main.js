@@ -107,10 +107,10 @@ app.listen(port, () => {
 
 //Endpoints para características
 app.post('/size', async (req, res) => {
-  const { Size, min_gpm, max_gpm } = req.body;
+  const {min_gpm, max_gpm } = req.body;
 
   try {
-    const result = await addSizeValue(Size, min_gpm, max_gpm);
+    const result = await addSizeValue(min_gpm, max_gpm);
     res.json({ message: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
@@ -118,10 +118,10 @@ app.post('/size', async (req, res) => {
 });
 
 app.post('/condiciones', async (req, res) => {
-  const { condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion } = req.body;
+  const { Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion } = req.body;
 
   try {
-    const result = await addConditionValue(condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
+    const result = await addConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
     res.json({ message: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
@@ -129,10 +129,10 @@ app.post('/condiciones', async (req, res) => {
 });
 
 app.post('/energia', async (req, res) => {
-  const { energia, min_hp, max_hp, capacitor } = req.body;
+  const { min_hp, max_hp, capacitor } = req.body;
 
   try {
-    const result = await addEnergyValue(energia, min_hp, max_hp, capacitor);
+    const result = await addEnergyValue(min_hp, max_hp, capacitor);
     res.json({ message: result });
   } catch (error) {
     console.error('Error en el servidor:', error);

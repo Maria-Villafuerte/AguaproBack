@@ -78,16 +78,24 @@ async function checkEnergyValue(min_hp, max_hp, capacitor) {
   }
 }
 
-export async function addEnergyValue(energia, min_hp, max_hp, capacitor) {
+export async function addEnergyValue(min_hp, max_hp, capacitor) {
   capacitor = capacitor.toLowerCase();
   try {
     let exists = await checkEnergyValue(min_hp, max_hp, capacitor);
     if (exists !== 0) {
-      return "Ese dato de energía ya existe en la posición: " + exists;
+      console.log('Este dato de energía ya existe.')
+      return exists;
     }
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Energía');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const energia = rowCount + 1;
+
     await conn.query(
       "INSERT INTO Energía (energia, min_hp, max_hp, capacitor) VALUES ($1, $2, $3, $4)", 
-      [energia, min_hp, max_hp, lc_capacitor]
+      [energia, min_hp, max_hp, capacitor]
     );
     return "Creado";
   } catch (error) {
@@ -121,13 +129,21 @@ async function checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_
   }
 }
 
-export async function addConditionValue(condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
+export async function addConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
   try {
     let exists = await checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
     
     if (exists !== 0) {
-      return "Esa combinación de condiciones ya existe en la posición: " + exists;
+      console.log('Esta combinación de condiciones ya existe.')
+      return exists;
     }
+
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Condiciones');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const condiciones = rowCount + 1;
     
     await conn.query(
       `INSERT INTO Condiciones (condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) 
@@ -165,18 +181,26 @@ async function checkSizeValue(min_gpm, max_gpm) {
   }
 }
 
-export async function addSizeValue(Size, min_gpm, max_gpm) {
+export async function addSizeValue(min_gpm, max_gpm) {
   try {
     let exists = await checkSizeValue(min_gpm, max_gpm);
     
     if (exists !== 0) {
-      return "Esa combinación de Size ya existe en la posición: " + exists;
+      console.log('Esa combinación de Size ya existe en la posición')
+      return exists;
     }
+
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Size');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const size = rowCount + 1;
     
     await conn.query(
       `INSERT INTO Size (Size, min_gpm, max_gpm) 
        VALUES ($1, $2, $3)`,
-      [Size, min_gpm, max_gpm]
+      [size, min_gpm, max_gpm]
     );
     
     return "Creado";
