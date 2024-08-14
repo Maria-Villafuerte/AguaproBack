@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct,updateProduct } from './db.js'
+import { getProductos, getProductById, deleteProduct,updateProduct, savePurchase} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
