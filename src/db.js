@@ -189,7 +189,6 @@ async function checkEnergyValue(min_hp, max_hp, capacitor) {
 }
 
 export async function addEnergyValue(min_hp, max_hp, capacitor) {
-  capacitor = capacitor.toLowerCase();
   try {
     let exists = await checkEnergyValue(min_hp, max_hp, capacitor);
     if (exists !== 0) {
@@ -244,7 +243,7 @@ export async function addConditionValue(Temperatura_liquida_min, Temperatura_liq
     let exists = await checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
     
     if (exists !== 0) {
-      console.log('Esta combinación de condiciones ya existe.')
+      console.log('Ese dato de condiciones ya existe.')
       return exists;
     }
 
@@ -296,7 +295,7 @@ export async function addSizeValue(min_gpm, max_gpm) {
     let exists = await checkSizeValue(min_gpm, max_gpm);
     
     if (exists !== 0) {
-      console.log('Esa combinación de Size ya existe en la posición')
+      console.log('Ese dato de Size ya existe')
       return exists;
     }
 
@@ -322,10 +321,6 @@ export async function addSizeValue(min_gpm, max_gpm) {
 
 // Asocial todas las características al producto
 export async function addCaracteristicas(marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) {
-  marca = marca.toLowerCase()
-  material = material.toLowerCase()
-  conexion_tuberia = conexion_tuberia.toLowerCase()
-  aplicaciones = aplicaciones.toLowerCase()
 
   try {
     await conn.query(
