@@ -2,7 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct,updateProduct, savePurchase} from './db.js'
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase,
+  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
+  getEnergia } from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -50,8 +52,8 @@ app.get('/productos/:productId', async (req, res) => {
   }
 });
 
-// Eliminar un producto
-app.delete('/productos/:productId', async (req, res) => {
+// Ocultar un producto
+app.put('/productos/hide/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   try {
     await deleteProduct(productId);
@@ -61,6 +63,7 @@ app.delete('/productos/:productId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 // Crear un nuevo producto
 app.post('/productos', async (req, res) => {
   const newProduct = req.body;
@@ -117,4 +120,119 @@ app.post('/save_purchase', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
+});
+
+//Endpoints para características
+//Ver características
+app.get('/size', async (req, res) => {
+  try {
+    const posts = await getProductos()
+    if (posts !== 'No posts found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Posts retrieved successfully.', data: posts })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No posts found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/size', async (req, res) => {
+  try {
+    const sizeValues = await getSize()
+    if (sizeValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: sizeValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/condiciones', async (req, res) => {
+  try {
+    const conditionValues = await getConditions()
+    if (conditionValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: conditionValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+app.get('/energia', async (req, res) => {
+  try {
+    const energyValues = await getEnergia()
+    if (energyValues !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: energyValues })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
+//Añadír características
+app.post('/size', async (req, res) => {
+  const {min_gpm, max_gpm } = req.body;
+
+  try {
+    const result = await addSizeValue(min_gpm, max_gpm);
+    res.json({ message: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/condiciones', async (req, res) => {
+  const { Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion } = req.body;
+
+  try {
+    const result = await addConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
+    res.json({ message: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/energia', async (req, res) => {
+  const { min_hp, max_hp, capacitor } = req.body;
+
+  try {
+    const result = await addEnergyValue(min_hp, max_hp, capacitor);
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/caracteristicas', async (req, res) => {
+  const { 
+    marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+  } = req.body;
+
+  try {
+    const result = await addCaracteristicas({ 
+      marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+      head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+    });
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
 });

@@ -1,7 +1,7 @@
 import conn from './conn.js'
 
 export async function getProductos () {
-  const result = await conn.query('SELECT * FROM Productos')
+  const result = await conn.query("SELECT * FROM Productos WHERE estado = 'en venta'")
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
@@ -22,12 +22,13 @@ export async function getProductById(productId) {
 // Eliminar producto
 export async function deleteProduct(productId) {
   try {
-    await conn.query('DELETE FROM Productos WHERE id_producto = $1', [productId]);
+    await conn.query("UPDATE Productos SET estado = 'oculto' WHERE id_producto = $1", [productId]);
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
   }
 }
+
 export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
   try {
     const result = await conn.query(
@@ -110,6 +111,193 @@ export async function createProduct(product) {
   try {
     const result = await conn.query(query, values);
     return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+//Ver valores de características
+export async function getSize () {
+  const result = await conn.query("SELECT * FROM Size")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+export async function getConditions () {
+  const result = await conn.query("SELECT * FROM Condiciones")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+export async function getEnergia () {
+  const result = await conn.query("SELECT * FROM Energía")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+// Añadir datos de energía
+async function checkEnergyValue(min_hp, max_hp, capacitor) {
+  try {
+    const result = await conn.query(
+      "SELECT energia FROM Energía WHERE min_hp = $1 AND max_hp = $2 AND capacitor = $3",
+      [min_hp, max_hp, capacitor]
+    );
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'energia'
+      return result.rows[0].energia;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addEnergyValue(min_hp, max_hp, capacitor) {
+  capacitor = capacitor.toLowerCase();
+  try {
+    let exists = await checkEnergyValue(min_hp, max_hp, capacitor);
+    if (exists !== 0) {
+      console.log('Este dato de energía ya existe.')
+      return exists;
+    }
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Energía');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const energia = rowCount + 1;
+
+    await conn.query(
+      "INSERT INTO Energía (energia, min_hp, max_hp, capacitor) VALUES ($1, $2, $3, $4)", 
+      [energia, min_hp, max_hp, capacitor]
+    );
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+
+// Añadir datos de condiciones
+async function checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
+  try {
+    const result = await conn.query(
+      `SELECT condiciones 
+       FROM Condiciones 
+       WHERE Temperatura_liquida_min = $1 
+         AND Temperatura_liquida_max = $2 
+         AND Temperatura_Ambiente = $3 
+         AND presion = $4`,
+      [Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion]
+    );
+    
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'condiciones'
+      return result.rows[0].condiciones;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) {
+  try {
+    let exists = await checkConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
+    
+    if (exists !== 0) {
+      console.log('Esta combinación de condiciones ya existe.')
+      return exists;
+    }
+
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Condiciones');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const condiciones = rowCount + 1;
+    
+    await conn.query(
+      `INSERT INTO Condiciones (condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion) 
+       VALUES ($1, $2, $3, $4, $5)`,
+      [condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion]
+    );
+    
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+
+// Añadir dato a size
+async function checkSizeValue(min_gpm, max_gpm) {
+  try {
+    const result = await conn.query(
+      `SELECT Size 
+       FROM Size 
+       WHERE min_gpm = $1 
+         AND max_gpm = $2`,
+      [min_gpm, max_gpm]
+    );
+    
+    if (result.rows.length > 0) {
+      // Si existe, devolver el 'Size'
+      return result.rows[0].Size;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addSizeValue(min_gpm, max_gpm) {
+  try {
+    let exists = await checkSizeValue(min_gpm, max_gpm);
+    
+    if (exists !== 0) {
+      console.log('Esa combinación de Size ya existe en la posición')
+      return exists;
+    }
+
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Size');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const size = rowCount + 1;
+    
+    await conn.query(
+      `INSERT INTO Size (Size, min_gpm, max_gpm) 
+       VALUES ($1, $2, $3)`,
+      [size, min_gpm, max_gpm]
+    );
+    
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+// Asocial todas las características al producto
+export async function addCaracteristicas(marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) {
+  marca = marca.toLowerCase()
+  material = material.toLowerCase()
+  conexion_tuberia = conexion_tuberia.toLowerCase()
+  aplicaciones = aplicaciones.toLowerCase()
+
+  try {
+    await conn.query(
+      `INSERT INTO Características (marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      [marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media]
+    );
+    
+    return "Creado";
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
