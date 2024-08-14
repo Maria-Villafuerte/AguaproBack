@@ -80,6 +80,23 @@ app.put('/productos/:productId', async (req, res) => {
   }
 });
 
+// save_purchase - Crear nueva compra y guardar en la base de datos
+app.post('/save_purchase', async (req, res) => {
+  const { clienteId, productos, nitEmpresa, idDescuento } = req.body;
+
+  try {
+    const result = await savePurchase(clienteId, productos, nitEmpresa, idDescuento);
+    if (result.success) {
+      return res.status(200).json({ message: 'Compra guardada exitosamente.' });
+    } else {
+      return res.status(400).json({ error: result.message });
+    }
+  } catch (error) {
+    console.error('Error al guardar la compra:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
 });
