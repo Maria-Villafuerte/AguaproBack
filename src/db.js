@@ -104,8 +104,6 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
   }
 }
 
-
-
 export async function deletePurchase(pedidoId) {
   try {
     await conn.query('BEGIN');
@@ -144,12 +142,20 @@ export async function deletePurchase(pedidoId) {
 // Crear producto
 export async function createProduct(product) {
   const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
+
+  // Obtener el número de filas en la tabla
+  const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
+  const rowCount = parseInt(result.rows[0].count, 10);
+
+  // Formar un nuevo índice basado en el número de filas
+  const producto = rowCount + 1;
+
   const query = `
-    INSERT INTO Productos (nombre, descripción, precio, disponibilidad, tipo_producto)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO Productos (id_producto, nombre, descripción, precio, disponibilidad, tipo_producto)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `;
-  const values = [nombre, descripción, precio, disponibilidad, tipo_producto];
+  const values = [producto, nombre, descripción, precio, disponibilidad, tipo_producto];
   try {
     const result = await conn.query(query, values);
     return result.rows[0];
