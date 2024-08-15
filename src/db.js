@@ -8,7 +8,12 @@ export async function getProductos () {
 // Obtener productos por ID
 export async function getProductById(productId) {
   try {
-    const result = await conn.query('SELECT * FROM Productos WHERE id_producto = $1', [productId]);
+    const result = await conn.query(`SELECT * FROM Productos p
+      JOIN características c ON p.id_producto = c.producto
+      JOIN size s ON c.size = s.size
+      JOIN energía e ON c.energia = e.energia
+      JOIN condiciones t ON c.condiciones = t.condiciones
+      WHERE id_producto = $1`, [productId]);
     if (result.rows.length === 1) {
       return result.rows[0]; // Devuelve el primer producto encontrado
     }
