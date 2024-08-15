@@ -331,16 +331,21 @@ export async function addSizeValue(min_gpm, max_gpm) {
 }
 
 // Asocial todas las características al producto
-export async function addCaracteristicas(marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) {
+export async function addCaracteristicas(caracteristicas) {
+  const { 
+    marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+  } = caracteristicas;
 
   try {
     await conn.query(
       `INSERT INTO Características (marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING *`,
       [marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media]
     );
     
-    return "Creado";
+    return result.rows[0];
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
