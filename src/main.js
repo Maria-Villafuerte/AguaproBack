@@ -122,7 +122,6 @@ app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
 });
 
-
 // Endpoint para eliminar un pedido
 app.delete('/delete_purchase/:pedidoId', async (req, res) => {
   const pedidoId = parseInt(req.params.pedidoId, 10);
@@ -238,20 +237,13 @@ app.post('/energia', async (req, res) => {
 });
 
 app.post('/caracteristicas', async (req, res) => {
-  const { 
-    marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
-    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
-  } = req.body;
+  const caracteristicas = req.body;
 
   try {
-    const result = await addCaracteristicas({ 
-      marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
-      head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
-    });
+    const result = await addCaracteristicas(caracteristicas);
     res.json({ message: result });
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
-
