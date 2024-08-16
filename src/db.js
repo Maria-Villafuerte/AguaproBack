@@ -8,12 +8,16 @@ export async function getProductos () {
 // Obtener productos por ID
 export async function getProductById(productId) {
   try {
-    const result = await conn.query(`SELECT * FROM Productos p
-      JOIN características c ON p.id_producto = c.producto
-      JOIN size s ON c.size = s.size
-      JOIN energía e ON c.energia = e.energia
-      JOIN condiciones t ON c.condiciones = t.condiciones
-      WHERE id_producto = $1`, [productId]);
+    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, 
+    p.precio, p.disponibilidad, p.tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
+    c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
+    s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
+    t.temperatura_ambiente, t.presion FROM Productos p
+    JOIN características c ON p.id_producto = c.producto
+    JOIN size s ON c.size = s.size
+    JOIN energía e ON c.energia = e.energia
+    JOIN condiciones t ON c.condiciones = t.condiciones
+    WHERE id_producto = $1`, [productId]);
     if (result.rows.length === 1) {
       return result.rows[0]; // Devuelve el primer producto encontrado
     }
@@ -338,7 +342,7 @@ export async function addCaracteristicas(caracteristicas) {
   } = caracteristicas;
 
   try {
-    await conn.query(
+    let result = await conn.query(
       `INSERT INTO Características (marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
