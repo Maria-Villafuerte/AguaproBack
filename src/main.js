@@ -143,21 +143,6 @@ app.delete('/delete_purchase/:pedidoId', async (req, res) => {
 //Ver características
 app.get('/size', async (req, res) => {
   try {
-    const posts = await getProductos()
-    if (posts !== 'No posts found.') {
-      res
-        .status(200)
-        .json({ status: 'success', message: 'Posts retrieved successfully.', data: posts })
-    } else {
-      res.status(404).json({ status: 'failed', message: 'No posts found.' })
-    }
-   } catch (error) {
-    res.status(500).json({ status: 'failed', error: error.message })
-   }
-})
-
-app.get('/size', async (req, res) => {
-  try {
     const sizeValues = await getSize()
     if (sizeValues !== 'No values found.') {
       res
