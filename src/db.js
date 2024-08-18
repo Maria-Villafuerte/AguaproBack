@@ -1,7 +1,16 @@
 import conn from './conn.js'
 
 export async function getProductos () {
-  const result = await conn.query("SELECT * FROM Productos WHERE estado = 'en venta'")
+  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, 
+    p.precio, p.disponibilidad, p.tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
+    c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
+    s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
+    t.temperatura_ambiente, t.presion FROM Productos p
+    JOIN características c ON p.id_producto = c.producto
+    JOIN size s ON c.size = s.size
+    JOIN energía e ON c.energia = e.energia
+    JOIN condiciones t ON c.condiciones = t.condiciones
+    WHERE estado = 'en venta'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
