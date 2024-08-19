@@ -364,3 +364,37 @@ export async function addCaracteristicas(caracteristicas) {
     throw error;
   }
 }
+
+
+export async function getAllPedidos() {
+  try {
+    const result = await conn.query('SELECT * FROM Pedidos');
+    return result.rows;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function getPedidoById(pedidoId) {
+  try {
+    const result = await conn.query('SELECT * FROM Pedidos WHERE id_pedido = $1', [pedidoId]);
+    if (result.rows.length === 1) {
+      return result.rows[0]; // Devuelve el pedido encontrado
+    }
+    return null;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function getPedidosByEstado(estadoId) {
+  try {
+    const result = await conn.query('SELECT * FROM Pedidos WHERE estatus = $1', [estadoId]);
+    return result.rows;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
