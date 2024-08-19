@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase, deletePurchase, 
   addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,registerUser,
-  loginUser, getEnergia, getUserById,  getUsers} from './db.js'
+  loginUser, getEnergia, getUserById,  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -234,6 +234,49 @@ app.post('/caracteristicas', async (req, res) => {
   }
 });
 
+// Endpoint para obtener pedidos por estado
+app.get('/pedidos/estado/:estadoId', async (req, res) => {
+  const estadoId = parseInt(req.params.estadoId, 10);
+
+  try {
+    const pedidos = await getPedidosByEstado(estadoId);
+    if (pedidos.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron pedidos para el estado especificado.' });
+    }
+    return res.status(200).json(pedidos);
+  } catch (error) {
+    console.error('Error al obtener los pedidos por estado:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint para obtener un pedido por ID
+app.get('/pedidos/:pedidoId', async (req, res) => {
+  const pedidoId = parseInt(req.params.pedidoId, 10);
+
+  try {
+    const pedido = await getPedidoById(pedidoId);
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+    return res.status(200).json(pedido);
+  } catch (error) {
+    console.error('Error al obtener el pedido:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint para obtener todos los pedidos
+app.get('/pedidos', async (req, res) => {
+  try {
+    const pedidos = await getAllPedidos();
+    return res.status(200).json(pedidos);
+  } catch (error) {
+    console.error('Error al obtener los pedidos:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/register', async (req, res) => {
   const { username, password, email, role } = req.body;
 
@@ -294,3 +337,4 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ status: 'failed', error: error.message })
    }
 })
+
