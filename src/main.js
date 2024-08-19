@@ -140,7 +140,7 @@ app.delete('/delete_purchase/:pedidoId', async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-=======
+
 //Endpoints para características
 //Ver características
 app.get('/size', async (req, res) => {
