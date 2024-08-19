@@ -2,8 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
-import { getProductos, getProductById, deleteProduct,updateProduct, savePurchase,deletePurchase} from './db.js'
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase,
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase, deletePurchase, 
   addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,
   getEnergia } from './db.js'
 import authenticateToken from './middleware.js'
@@ -123,7 +122,6 @@ app.listen(port, () => {
   console.log(`API escuchando en http://localhost:${port}`);
 });
 
-
 // Endpoint para eliminar un pedido
 app.delete('/delete_purchase/:pedidoId', async (req, res) => {
   const pedidoId = parseInt(req.params.pedidoId, 10);
@@ -140,24 +138,9 @@ app.delete('/delete_purchase/:pedidoId', async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-=======
+
 //Endpoints para características
 //Ver características
-app.get('/size', async (req, res) => {
-  try {
-    const posts = await getProductos()
-    if (posts !== 'No posts found.') {
-      res
-        .status(200)
-        .json({ status: 'success', message: 'Posts retrieved successfully.', data: posts })
-    } else {
-      res.status(404).json({ status: 'failed', message: 'No posts found.' })
-    }
-   } catch (error) {
-    res.status(500).json({ status: 'failed', error: error.message })
-   }
-})
-
 app.get('/size', async (req, res) => {
   try {
     const sizeValues = await getSize()
@@ -239,20 +222,13 @@ app.post('/energia', async (req, res) => {
 });
 
 app.post('/caracteristicas', async (req, res) => {
-  const { 
-    marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
-    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
-  } = req.body;
+  const caracteristicas = req.body;
 
   try {
-    const result = await addCaracteristicas({ 
-      marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
-      head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
-    });
+    const result = await addCaracteristicas(caracteristicas);
     res.json({ message: result });
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
-
