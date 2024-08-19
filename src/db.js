@@ -372,7 +372,8 @@ export async function getAllPedidos() {
     return result.rows;
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
-    
+  }
+}
 export async function getPedidoById(pedidoId) {
   try {
     const result = await conn.query('SELECT * FROM Pedidos WHERE id_pedido = $1', [pedidoId]);
