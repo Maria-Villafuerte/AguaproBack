@@ -369,16 +369,19 @@ export async function addCaracteristicas(caracteristicas) {
 export async function getAllPedidos() {
   try {
     const query = `
-      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
-             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
-             f.monto_total, f.nit_empresa, f.id_descuento
+      SELECT 
+        p.id_pedido, 
+        p.estatus, 
+        te.nombre AS estado, 
+        c.id_cliente, 
+        c.nombre AS cliente, 
+        f.monto_total, 
+        f.nit_empresa, 
+        f.id_descuento
       FROM Pedidos p
       JOIN Tipos_estados te ON p.estatus = te.id_estado
       JOIN Factura f ON p.id_pedido = f.id_pedido
       JOIN Clientes c ON f.id_cliente = c.id_cliente
-      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
-      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
-      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
     `;
     const result = await conn.query(query);
     return result.rows;
@@ -389,16 +392,19 @@ export async function getAllPedidos() {
 export async function getPedidoById(pedidoId) {
   try {
     const query = `
-      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
-             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
-             f.monto_total, f.nit_empresa, f.id_descuento
+      SELECT 
+        p.id_pedido, 
+        p.estatus, 
+        te.nombre AS estado, 
+        c.id_cliente, 
+        c.nombre AS cliente, 
+        f.monto_total, 
+        f.nit_empresa, 
+        f.id_descuento
       FROM Pedidos p
       JOIN Tipos_estados te ON p.estatus = te.id_estado
       JOIN Factura f ON p.id_pedido = f.id_pedido
       JOIN Clientes c ON f.id_cliente = c.id_cliente
-      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
-      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
-      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
       WHERE p.id_pedido = $1
     `;
     const result = await conn.query(query, [pedidoId]);
@@ -415,16 +421,19 @@ export async function getPedidoById(pedidoId) {
 export async function getPedidosByEstado(estadoId) {
   try {
     const query = `
-      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
-             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
-             f.monto_total, f.nit_empresa, f.id_descuento
+      SELECT 
+        p.id_pedido, 
+        p.estatus, 
+        te.nombre AS estado, 
+        c.id_cliente, 
+        c.nombre AS cliente, 
+        f.monto_total, 
+        f.nit_empresa, 
+        f.id_descuento
       FROM Pedidos p
       JOIN Tipos_estados te ON p.estatus = te.id_estado
       JOIN Factura f ON p.id_pedido = f.id_pedido
       JOIN Clientes c ON f.id_cliente = c.id_cliente
-      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
-      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
-      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
       WHERE p.estatus = $1
     `;
     const result = await conn.query(query, [estadoId]);
@@ -434,6 +443,29 @@ export async function getPedidosByEstado(estadoId) {
     throw error;
   }
 }
+
+export async function getProductosByPedido(pedidoId) {
+  try {
+    const query = `
+      SELECT 
+        pr.id_producto, 
+        pr.nombre, 
+        pr.precio, 
+        tp.nombre AS tipo_producto,
+        r.cantidad
+      FROM Recuento r
+      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
+      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
+      WHERE r.Pedido_Fk = $1
+    `;
+    const result = await conn.query(query, [pedidoId]);
+    return result.rows;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
 
 // Account Controller
 export async function registerUser(username, password, email, role = 'user') {
