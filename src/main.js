@@ -277,6 +277,22 @@ app.get('/pedidos', async (req, res) => {
   }
 });
 
+app.get('/pedidos/:pedidoId/productos', async (req, res) => {
+  const pedidoId = parseInt(req.params.pedidoId, 10);
+
+  try {
+    const productos = await getProductosByPedido(pedidoId);
+    if (productos.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron productos para el pedido especificado.' });
+    }
+    return res.status(200).json(productos);
+  } catch (error) {
+    console.error('Error al obtener los productos del pedido:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 app.post('/register', async (req, res) => {
   const { username, password, email, role } = req.body;
 
