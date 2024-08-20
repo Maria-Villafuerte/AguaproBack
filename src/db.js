@@ -368,7 +368,19 @@ export async function addCaracteristicas(caracteristicas) {
 
 export async function getAllPedidos() {
   try {
-    const result = await conn.query('SELECT * FROM Pedidos');
+    const query = `
+      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
+             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
+             f.monto_total, f.nit_empresa, f.id_descuento
+      FROM Pedidos p
+      JOIN Tipos_estados te ON p.estatus = te.id_estado
+      JOIN Factura f ON p.id_pedido = f.id_pedido
+      JOIN Clientes c ON f.id_cliente = c.id_cliente
+      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
+      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
+      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
+    `;
+    const result = await conn.query(query);
     return result.rows;
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
@@ -376,7 +388,20 @@ export async function getAllPedidos() {
 }
 export async function getPedidoById(pedidoId) {
   try {
-    const result = await conn.query('SELECT * FROM Pedidos WHERE id_pedido = $1', [pedidoId]);
+    const query = `
+      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
+             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
+             f.monto_total, f.nit_empresa, f.id_descuento
+      FROM Pedidos p
+      JOIN Tipos_estados te ON p.estatus = te.id_estado
+      JOIN Factura f ON p.id_pedido = f.id_pedido
+      JOIN Clientes c ON f.id_cliente = c.id_cliente
+      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
+      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
+      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
+      WHERE p.id_pedido = $1
+    `;
+    const result = await conn.query(query, [pedidoId]);
     if (result.rows.length === 1) {
       return result.rows[0]; // Devuelve el pedido encontrado
     }
@@ -389,7 +414,20 @@ export async function getPedidoById(pedidoId) {
 
 export async function getPedidosByEstado(estadoId) {
   try {
-    const result = await conn.query('SELECT * FROM Pedidos WHERE estatus = $1', [estadoId]);
+    const query = `
+      SELECT p.id_pedido, p.estatus, te.nombre AS estado, c.id_cliente, c.nombre AS cliente, 
+             pr.id_producto, pr.nombre AS producto, pr.precio, pr.disponibilidad, tp.nombre AS tipo_producto, 
+             f.monto_total, f.nit_empresa, f.id_descuento
+      FROM Pedidos p
+      JOIN Tipos_estados te ON p.estatus = te.id_estado
+      JOIN Factura f ON p.id_pedido = f.id_pedido
+      JOIN Clientes c ON f.id_cliente = c.id_cliente
+      JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
+      JOIN Productos pr ON r.Producto_Fk = pr.id_producto
+      JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
+      WHERE p.estatus = $1
+    `;
+    const result = await conn.query(query, [estadoId]);
     return result.rows;
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
