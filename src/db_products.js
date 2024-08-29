@@ -6,7 +6,8 @@ export async function getProductos () {
       v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
       c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
       s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-      t.temperatura_ambiente, t.presion FROM Productos p
+      t.temperatura_ambiente, t.presion, c.id_caracteristicas
+      FROM Productos p
       JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
       JOIN características c ON p.id_producto = c.producto
       JOIN energía e ON c.energia = e.energia
@@ -24,7 +25,8 @@ export async function getProductById(productId) {
       v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
       c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
       s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-      t.temperatura_ambiente, t.presion FROM Productos p
+      t.temperatura_ambiente, t.presion, c.id_caracteristicas
+      FROM Productos p
       JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
       JOIN características c ON p.id_producto = c.producto
       JOIN energía e ON c.energia = e.energia
@@ -53,11 +55,11 @@ export async function deleteProduct(productId) {
 }
 
 // Editar producto
-export async function updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto) {
+export async function updateProduct(productId, nombre, descripción, tipo_producto) {
     try {
         const result = await conn.query(
-        'UPDATE Productos SET nombre = $1, descripción = $2, precio = $3, disponibilidad = $4, tipo_producto = $5 WHERE id_producto = $6',
-        [nombre, descripción, precio, disponibilidad, tipo_producto, productId]
+        'UPDATE Productos SET nombre = $1, descripción = $2, tipo_producto = $3 WHERE id_producto = $4',
+        [nombre, descripción, tipo_producto, productId]
         );
         return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
     } catch (error) {
@@ -68,7 +70,7 @@ export async function updateProduct(productId, nombre, descripción, precio, dis
 
 // Crear producto
 export async function createProduct(product) {
-    const { nombre, descripción, precio, disponibilidad, tipo_producto } = product;
+    const { nombre, descripción, tipo_producto } = product;
   
     // Obtener el número de filas en la tabla
     const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
@@ -78,11 +80,11 @@ export async function createProduct(product) {
     const producto = rowCount + 1;
   
     const query = `
-      INSERT INTO Productos (id_producto, nombre, descripción, precio, disponibilidad, tipo_producto)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO Productos (id_producto, nombre, descripción, tipo_producto)
+      VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
-    const values = [producto, nombre, descripción, precio, disponibilidad, tipo_producto];
+    const values = [producto, nombre, descripción, tipo_producto];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];

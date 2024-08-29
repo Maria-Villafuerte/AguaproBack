@@ -21,6 +21,48 @@ export async function getTiposProducto() {
     return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
   
+// Añadir datos de tipo Producto
+async function checkTipoProducto() {
+  try {
+    const result = await conn.query(
+      "SELECT id_tipo FROM Tipo_producto WHERE nombre = $1",
+      [tipo]
+    );
+    if (result.rows.length > 0) {
+      return result.rows[0].id_tipo;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function addTipoProducto(tipo) {
+  try {
+    let exists = await checkTipoProducto(tipo);
+    if (exists !== 0) {
+      console.log('Esta categoría de producto ya existe.')
+      return exists;
+    }
+    // Obtener el número de filas en la tabla
+    const result = await conn.query('SELECT COUNT(*) AS count FROM Tipo_producto');
+    const rowCount = parseInt(result.rows[0].count, 10);
+
+    // Formar un nuevo índice basado en el número de filas
+    const id_tipo = rowCount + 1;
+
+    await conn.query(
+      "INSERT INTO Tipo_producto (id_tipo, nombre) VALUES ($1, $2)", 
+      [id_tipo, tipo]
+    );
+    return "Creado";
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
 // Añadir datos de energía
 async function checkEnergyValue(min_hp, max_hp, capacitor) {
     try {
@@ -171,19 +213,19 @@ export async function addSizeValue(min_gpm, max_gpm, range) {
     }
 }
   
-// Asocial todas las características al producto
+// Asociar todas las características al producto
 export async function addCaracteristicas(caracteristicas) {
     const { 
-      marca, size, material, profundidad, conexion_tuberia, presion_funcional, 
+      marca, material, profundidad, conexion_tuberia, presion_funcional, 
       head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
     } = caracteristicas;
   
     try {
       let result = await conn.query(
-        `INSERT INTO Características (marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        `INSERT INTO Características (marca, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
          RETURNING *`,
-        [marca, size, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media]
+        [marca, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media]
       );
       
       return result.rows[0];
@@ -191,4 +233,72 @@ export async function addCaracteristicas(caracteristicas) {
       console.error('Error en la consulta SQL:', error);
       throw error;
     }
+}
+
+export async function updateCaracteristicas(caracteristicas) {
+  const { 
+    idCaracts, marca, material, profundidad, conexion_tuberia, presion_funcional, 
+    head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
+  } = caracteristicas;
+
+  try {
+    let result = await conn.query(
+      `UPDATE Características 
+       SET 
+         marca = $1, material = $2, profundidad = $3, conexion_tuberia = $4,
+         presion_funcional = $5, head = $6, flow_rate = $7, aplicaciones = $8, producto = $9,
+         energia = $10, condiciones = $11, temperatura_media = $12
+       WHERE id_caracteristicas = $13
+       RETURNING *`,
+      [marca, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media, idCaracts]
+    );
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+// Características variables
+export async function addVariables(caracteristicas_variables) {
+  const { 
+    idCaracts, size, precio, disponibilidad
+  } = caracteristicas_variables;
+
+  try {
+    let result = await conn.query(
+      `INSERT INTO caracteristicas_variables (id_caracteristicas, size, precio, disponibilidad) 
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [idCaracts, size, precio, disponibilidad]
+    );
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
+
+export async function updateVariables(caracteristicas_variables) {
+  const { 
+    idCaracts, size, precio, disponibilidad
+  } = caracteristicas_variables;
+
+  try {
+    let result = await conn.query(
+      `UPDATE caracteristicas_variables 
+      SET 
+        precio = $3, disponibilidad = $4
+      WHERE id_caracteristicas = $1 AND size = $2
+      RETURNING *`,
+      [idCaracts, size, precio, disponibilidad]
+    );
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
 }

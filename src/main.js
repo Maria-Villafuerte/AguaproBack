@@ -4,7 +4,8 @@ import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
-import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia} from './db_characteristics.js'
+import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
+  addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables} from './db_characteristics.js'
 
 import { savePurchase, deletePurchase, registerUser, loginUser, getUserById,  
   getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
@@ -86,14 +87,13 @@ app.post('/productos', async (req, res) => {
   }
 });
 
-
 // Endpoint para actualizar un producto
 app.put('/productos/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
-  const { nombre, descripción, precio, disponibilidad, tipo_producto } = req.body;
+  const { nombre, descripción, tipo_producto } = req.body;
 
   try {
-    const updated = await updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto);
+    const updated = await updateProduct(productId, nombre, descripción, tipo_producto);
     if (!updated) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -189,6 +189,21 @@ app.get('/energia', async (req, res) => {
    }
 })
 
+app.get('/tipos_producto', async (req, res) => {
+  try {
+    const Values = await getTiposProducto()
+    if (Values !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: Values })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
 //Añadír características
 app.post('/size', async (req, res) => {
   const {min_gpm, max_gpm } = req.body;
@@ -224,6 +239,18 @@ app.post('/energia', async (req, res) => {
   }
 });
 
+app.post('/tipos_producto', async (req, res) => {
+  const { tipo } = req.body;
+
+  try {
+    const result = await addTipoProducto(tipo);
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
 app.post('/caracteristicas', async (req, res) => {
   const caracteristicas = req.body;
 
@@ -233,6 +260,45 @@ app.post('/caracteristicas', async (req, res) => {
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+//nuevos tamaños
+app.post('/caracteristicas/variables', async (req, res) => {
+  const caracteristicas_variables = req.body;
+
+  try {
+    const result = await addVariables(caracteristicas_variables);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar variables de características' });
+  }
+});
+
+// Endpoint para actualizar las características "fijas" de un producto
+app.put('/caracteristicas/:idCaracts', async (req, res) => {
+  const idCaracts = req.params.idCaracts;
+  const caracteristicas = { ...req.body, idCaracts };
+
+  try {
+    const result = await updateCaracteristicas(caracteristicas);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar características' });
+  }
+});
+
+// Endpoint para actualizar las características de un producto por tamaño
+app.put('/caracteristicas/variables/:idCaracts', async (req, res) => {
+  const { idCaracts } = req.params;
+  const { size, precio, disponibilidad } = req.body;
+  const caracteristicas_variables = { idCaracts, size, precio, disponibilidad };
+
+  try {
+    const result = await updateVariables(caracteristicas_variables);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar variables de características' });
   }
 });
 
