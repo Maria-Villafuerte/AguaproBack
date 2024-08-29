@@ -3,9 +3,11 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase, deletePurchase, 
-  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,registerUser,
-  loginUser, getEnergia, getUserById,  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
+import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia} from './db_characteristics.js'
+
+import { savePurchase, deletePurchase, registerUser, loginUser, getUserById,  
+  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
