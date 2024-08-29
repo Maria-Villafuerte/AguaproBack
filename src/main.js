@@ -44,12 +44,12 @@ app.get('/productos/:productId', async (req, res) => {
   try {
     const product = await getProductById(productId);
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({status: 'failed', error: 'Product not found' });
     }
-    return res.status(200).json(product);
+    return res.status(200).json({ status: 'success', message: 'Posts retrieved successfully.', data: product });
   } catch (error) {
     console.error('Error fetching product by ID:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({status: 'failed',  error: 'Internal Server Error' });
   }
 });
 
@@ -243,7 +243,7 @@ app.get('/pedidos/estado/:estadoId', async (req, res) => {
     if (pedidos.length === 0) {
       return res.status(404).json({ error: 'No se encontraron pedidos para el estado especificado.' });
     }
-    return res.status(200).json(pedidos);
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });
   } catch (error) {
     console.error('Error al obtener los pedidos por estado:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -259,7 +259,7 @@ app.get('/pedidos/:pedidoId', async (req, res) => {
     if (!pedido) {
       return res.status(404).json({ error: 'Pedido no encontrado' });
     }
-    return res.status(200).json(pedido);
+    return res.status(200).json({ status: 'success', message: 'Se ha obtenido el pedido.', data: pedido });
   } catch (error) {
     console.error('Error al obtener el pedido:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -270,7 +270,7 @@ app.get('/pedidos/:pedidoId', async (req, res) => {
 app.get('/pedidos', async (req, res) => {
   try {
     const pedidos = await getAllPedidos();
-    return res.status(200).json(pedidos);
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });;
   } catch (error) {
     console.error('Error al obtener los pedidos:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -285,7 +285,7 @@ app.get('/pedidos/:pedidoId/productos', async (req, res) => {
     if (productos.length === 0) {
       return res.status(404).json({ error: 'No se encontraron productos para el pedido especificado.' });
     }
-    return res.status(200).json(productos);
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los productos para el pedido.', data: productos });;
   } catch (error) {
     console.error('Error al obtener los productos del pedido:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
