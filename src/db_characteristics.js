@@ -263,7 +263,7 @@ export async function updateCaracteristicas(caracteristicas) {
 // Características variables
 export async function addVariables(caracteristicas_variables) {
   const { 
-    idCaracts, size, precio, disponibilidad
+    id_caracteristicas, size, precio, disponibilidad
   } = caracteristicas_variables;
 
   try {
@@ -271,7 +271,7 @@ export async function addVariables(caracteristicas_variables) {
       `INSERT INTO caracteristicas_variables (id_caracteristicas, size, precio, disponibilidad) 
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [idCaracts, size, precio, disponibilidad]
+      [id_caracteristicas, size, precio, disponibilidad]
     );
     
     return result.rows[0];
@@ -283,7 +283,7 @@ export async function addVariables(caracteristicas_variables) {
 
 export async function updateVariables(caracteristicas_variables) {
   const { 
-    idCaracts, size, precio, disponibilidad
+    id_caracteristicas, size, precio, disponibilidad
   } = caracteristicas_variables;
 
   try {
@@ -293,7 +293,7 @@ export async function updateVariables(caracteristicas_variables) {
         precio = $3, disponibilidad = $4
       WHERE id_caracteristicas = $1 AND size = $2
       RETURNING *`,
-      [idCaracts, size, precio, disponibilidad]
+      [id_caracteristicas, size, precio, disponibilidad]
     );
     
     return result.rows[0];
