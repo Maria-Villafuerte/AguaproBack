@@ -276,9 +276,9 @@ app.post('/caracteristicas/variables', async (req, res) => {
 });
 
 // Endpoint para actualizar las características "fijas" de un producto
-app.put('/caracteristicas/:idCaracts', async (req, res) => {
-  const idCaracts = req.params.idCaracts;
-  const caracteristicas = { ...req.body, idCaracts };
+app.put('/caracteristicas/:id_caracteristicas', async (req, res) => {
+  const id_caracteristicas = req.params.id_caracteristicas;
+  const caracteristicas = { ...req.body, id_caracteristicas };
 
   try {
     const result = await updateCaracteristicas(caracteristicas);
@@ -289,10 +289,10 @@ app.put('/caracteristicas/:idCaracts', async (req, res) => {
 });
 
 // Endpoint para actualizar las características de un producto por tamaño
-app.put('/caracteristicas/variables/:idCaracts', async (req, res) => {
-  const { idCaracts } = req.params;
+app.put('/caracteristicas/variables/:id_caracteristicas', async (req, res) => {
+  const { id_caracteristicas } = req.params;
   const { size, precio, disponibilidad } = req.body;
-  const caracteristicas_variables = { idCaracts, size, precio, disponibilidad };
+  const caracteristicas_variables = { id_caracteristicas, size, precio, disponibilidad };
 
   try {
     const result = await updateVariables(caracteristicas_variables);
