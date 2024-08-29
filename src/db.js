@@ -2,15 +2,17 @@ import conn from './conn.js'
 import bcrypt from 'bcrypt';
 
 export async function getProductos () {
-  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, 
-    p.precio, p.disponibilidad, p.tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
+  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
+    v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
     c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
     s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
     t.temperatura_ambiente, t.presion FROM Productos p
+    JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
     JOIN características c ON p.id_producto = c.producto
-    JOIN size s ON c.size = s.size
     JOIN energía e ON c.energia = e.energia
     JOIN condiciones t ON c.condiciones = t.condiciones
+    JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
+    JOIN size s ON v.size = s.size
     WHERE estado = 'en venta'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
@@ -18,15 +20,17 @@ export async function getProductos () {
 // Obtener productos por ID
 export async function getProductById(productId) {
   try {
-    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, 
-    p.precio, p.disponibilidad, p.tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
+    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
+    v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
     c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
     s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
     t.temperatura_ambiente, t.presion FROM Productos p
+    JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
     JOIN características c ON p.id_producto = c.producto
-    JOIN size s ON c.size = s.size
     JOIN energía e ON c.energia = e.energia
     JOIN condiciones t ON c.condiciones = t.condiciones
+    JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
+    JOIN size s ON v.size = s.size
     WHERE id_producto = $1`, [productId]);
     if (result.rows.length === 1) {
       return result.rows[0]; // Devuelve el primer producto encontrado
@@ -195,6 +199,11 @@ export async function getEnergia () {
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
+export async function getTiposProducto() {
+  const result = await conn.query("SELECT * FROM tipo_producto")
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
 // Añadir datos de energía
 async function checkEnergyValue(min_hp, max_hp, capacitor) {
   try {
@@ -294,14 +303,15 @@ export async function addConditionValue(Temperatura_liquida_min, Temperatura_liq
 
 
 // Añadir dato a size
-async function checkSizeValue(min_gpm, max_gpm) {
+async function checkSizeValue(min_gpm, max_gpm, range) {
   try {
     const result = await conn.query(
       `SELECT Size 
        FROM Size 
        WHERE min_gpm = $1 
-         AND max_gpm = $2`,
-      [min_gpm, max_gpm]
+         AND max_gpm = $2
+         AND range = $3`,
+      [min_gpm, max_gpm, range]
     );
     
     if (result.rows.length > 0) {
@@ -315,9 +325,9 @@ async function checkSizeValue(min_gpm, max_gpm) {
   }
 }
 
-export async function addSizeValue(min_gpm, max_gpm) {
+export async function addSizeValue(min_gpm, max_gpm, range) {
   try {
-    let exists = await checkSizeValue(min_gpm, max_gpm);
+    let exists = await checkSizeValue(min_gpm, max_gpm, range);
     
     if (exists !== 0) {
       console.log('Ese dato de Size ya existe')
@@ -332,12 +342,12 @@ export async function addSizeValue(min_gpm, max_gpm) {
     const size = rowCount + 1;
     
     await conn.query(
-      `INSERT INTO Size (Size, min_gpm, max_gpm) 
-       VALUES ($1, $2, $3)`,
-      [size, min_gpm, max_gpm]
+      `INSERT INTO Size (Size, min_gpm, max_gpm, range) 
+       VALUES ($1, $2, $3, $4)`,
+      [size, min_gpm, max_gpm, range]
     );
     
-    return "Creado";
+    return size;
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
