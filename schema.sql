@@ -9,8 +9,6 @@ CREATE TABLE Productos (
     id_producto INT PRIMARY KEY,
     nombre VARCHAR(30),
     descripción TEXT,
-    precio DOUBLE PRECISION,
-    disponibilidad INT,
     tipo_producto INT,
     FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
 );
@@ -42,10 +40,12 @@ CREATE TABLE Size (
     max_gpm DOUBLE PRECISION
 );
 
+ALTER TABLE Size
+ADD COLUMN range INT;
+
 -- Tabla Características
 CREATE TABLE Características (
     marca VARCHAR(50),
-    size INT,
     material VARCHAR(50),
     profundidad DOUBLE PRECISION,
     conexion_tuberia VARCHAR(50),
@@ -57,10 +57,24 @@ CREATE TABLE Características (
     energia INT,
     condiciones INT,
     temperatura_media DOUBLE PRECISION,
-    FOREIGN KEY (size) REFERENCES Size(Size),
     FOREIGN KEY (producto) REFERENCES Productos(id_producto),
     FOREIGN KEY (energia) REFERENCES Energía(energia),
     FOREIGN KEY (condiciones) REFERENCES Condiciones(condiciones)
+);
+
+ALTER TABLE Características 
+ADD COLUMN id_caracteristicas SERIAL NOT NULL,
+ADD CONSTRAINT pk_id_caracteristicas PRIMARY KEY (id_caracteristicas);
+
+-- Tabla características variables
+CREATE TABLE caracteristicas_variables (
+    id_caracteristicas INT,
+    size INT,
+    precio DOUBLE PRECISION,
+    disponibilidad INT,
+    FOREIGN KEY (size) REFERENCES Size(Size),
+    FOREIGN KEY (id_caracteristicas) REFERENCES Características(id_caracteristicas),
+    PRIMARY KEY (id_caracteristicas, size)
 );
 
 -- Tabla Clientes
