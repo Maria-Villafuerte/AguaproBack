@@ -4,11 +4,13 @@ import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
+
 import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
   addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables} from './db_characteristics.js'
 
-import { savePurchase, deletePurchase, registerUser, loginUser, getUserById,  
-  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
+import {savePurchase, deletePurchase,getAllPedidos,getPedidoById,getPedidosByEstado,getProductosByPedido} from './db_pedidos.js'
+
+import { registerUser, loginUser, getUserById, getUsers} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
