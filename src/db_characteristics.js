@@ -237,7 +237,7 @@ export async function addCaracteristicas(caracteristicas) {
 
 export async function updateCaracteristicas(caracteristicas) {
   const { 
-    idCaracts, marca, material, profundidad, conexion_tuberia, presion_funcional, 
+    id_caracteristicas, marca, material, profundidad, conexion_tuberia, presion_funcional, 
     head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media 
   } = caracteristicas;
 
@@ -250,7 +250,7 @@ export async function updateCaracteristicas(caracteristicas) {
          energia = $10, condiciones = $11, temperatura_media = $12
        WHERE id_caracteristicas = $13
        RETURNING *`,
-      [marca, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media, idCaracts]
+      [marca, material, profundidad, conexion_tuberia, presion_funcional, head, flow_rate, aplicaciones, producto, energia, condiciones, temperatura_media, id_caracteristicas]
     );
     
     return result.rows[0];
