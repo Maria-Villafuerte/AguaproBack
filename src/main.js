@@ -422,3 +422,11 @@ app.get('/users', async (req, res) => {
    }
 })
 
+app.post('/authenticate', authenticateToken, async (req, res) => {
+
+  try {
+    res.status(201).json({ status: 'success', message: 'Authenticate successfully.' })
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+  }
+})
