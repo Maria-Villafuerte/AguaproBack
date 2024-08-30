@@ -10,7 +10,6 @@ export default function authenticateToken(req, res, next) {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      console.error('JWT Error:', err);
       return res.status(403).send(`Forbidden: ${err.message}`);
     }
     req.user = user;
