@@ -3,9 +3,12 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct, savePurchase, deletePurchase, 
-  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions,registerUser,
-  loginUser, getEnergia, getUserById,  getUsers} from './db.js'
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
+import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
+  addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables} from './db_characteristics.js'
+
+import { savePurchase, deletePurchase, registerUser, loginUser, getUserById,  
+  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -44,12 +47,12 @@ app.get('/productos/:productId', async (req, res) => {
   try {
     const product = await getProductById(productId);
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({status: 'failed', error: 'Product not found' });
     }
-    return res.status(200).json(product);
+    return res.status(200).json({ status: 'success', message: 'Posts retrieved successfully.', data: product });
   } catch (error) {
     console.error('Error fetching product by ID:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({status: 'failed',  error: 'Internal Server Error' });
   }
 });
 
@@ -84,14 +87,13 @@ app.post('/productos', async (req, res) => {
   }
 });
 
-
 // Endpoint para actualizar un producto
 app.put('/productos/:productId', async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
-  const { nombre, descripción, precio, disponibilidad, tipo_producto } = req.body;
+  const { nombre, descripción, tipo_producto } = req.body;
 
   try {
-    const updated = await updateProduct(productId, nombre, descripción, precio, disponibilidad, tipo_producto);
+    const updated = await updateProduct(productId, nombre, descripción, tipo_producto);
     if (!updated) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -187,6 +189,21 @@ app.get('/energia', async (req, res) => {
    }
 })
 
+app.get('/tipos_producto', async (req, res) => {
+  try {
+    const Values = await getTiposProducto()
+    if (Values !== 'No values found.') {
+      res
+        .status(200)
+        .json({ status: 'success', message: 'Values retrieved successfully.', data: Values })
+    } else {
+      res.status(404).json({ status: 'failed', message: 'No values found.' })
+    }
+   } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+   }
+})
+
 //Añadír características
 app.post('/size', async (req, res) => {
   const {min_gpm, max_gpm } = req.body;
@@ -222,6 +239,18 @@ app.post('/energia', async (req, res) => {
   }
 });
 
+app.post('/tipos_producto', async (req, res) => {
+  const { tipo } = req.body;
+
+  try {
+    const result = await addTipoProducto(tipo);
+    res.json({ message: result });
+  } catch (error) {
+    console.error('Error en el servidor:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
 app.post('/caracteristicas', async (req, res) => {
   const caracteristicas = req.body;
 
@@ -233,6 +262,104 @@ app.post('/caracteristicas', async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
+//nuevos tamaños
+app.post('/caracteristicas/variables', async (req, res) => {
+  const caracteristicas_variables = req.body;
+
+  try {
+    const result = await addVariables(caracteristicas_variables);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar variables de características' });
+  }
+});
+
+// Endpoint para actualizar las características "fijas" de un producto
+app.put('/caracteristicas/:id_caracteristicas', async (req, res) => {
+  const id_caracteristicas = req.params.id_caracteristicas;
+  const caracteristicas = { ...req.body, id_caracteristicas };
+
+  try {
+    const result = await updateCaracteristicas(caracteristicas);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar características' });
+  }
+});
+
+// Endpoint para actualizar las características de un producto por tamaño
+app.put('/caracteristicas/variables/:id_caracteristicas', async (req, res) => {
+  const { id_caracteristicas } = req.params;
+  const { size, precio, disponibilidad } = req.body;
+  const caracteristicas_variables = { id_caracteristicas, size, precio, disponibilidad };
+
+  try {
+    const result = await updateVariables(caracteristicas_variables);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar variables de características' });
+  }
+});
+
+// Endpoint para obtener pedidos por estado
+app.get('/pedidos/estado/:estadoId', async (req, res) => {
+  const estadoId = parseInt(req.params.estadoId, 10);
+
+  try {
+    const pedidos = await getPedidosByEstado(estadoId);
+    if (pedidos.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron pedidos para el estado especificado.' });
+    }
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });
+  } catch (error) {
+    console.error('Error al obtener los pedidos por estado:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint para obtener un pedido por ID
+app.get('/pedidos/:pedidoId', async (req, res) => {
+  const pedidoId = parseInt(req.params.pedidoId, 10);
+
+  try {
+    const pedido = await getPedidoById(pedidoId);
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+    return res.status(200).json({ status: 'success', message: 'Se ha obtenido el pedido.', data: pedido });
+  } catch (error) {
+    console.error('Error al obtener el pedido:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint para obtener todos los pedidos
+app.get('/pedidos', async (req, res) => {
+  try {
+    const pedidos = await getAllPedidos();
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });;
+  } catch (error) {
+    console.error('Error al obtener los pedidos:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/pedidos/:pedidoId/productos', async (req, res) => {
+  const pedidoId = parseInt(req.params.pedidoId, 10);
+
+  try {
+    const productos = await getProductosByPedido(pedidoId);
+    if (productos.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron productos para el pedido especificado.' });
+    }
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los productos para el pedido.', data: productos });;
+  } catch (error) {
+    console.error('Error al obtener los productos del pedido:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.post('/register', async (req, res) => {
   const { username, password, email, role } = req.body;
@@ -294,6 +421,7 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ status: 'failed', error: error.message })
    }
 })
+
 app.post('/authenticate', authenticateToken, async (req, res) => {
 
   try {
