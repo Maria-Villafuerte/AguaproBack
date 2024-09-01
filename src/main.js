@@ -212,7 +212,7 @@ app.post('/size', async (req, res) => {
 
   try {
     const result = await addSizeValue(min_gpm, max_gpm, range);
-    res.json({ message: result });
+    res.json({ status: 'success', data: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
   }
@@ -223,7 +223,7 @@ app.post('/condiciones', async (req, res) => {
 
   try {
     const result = await addConditionValue(Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion);
-    res.json({ message: result });
+    res.json({ status: 'success', data: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
   }
@@ -234,7 +234,7 @@ app.post('/energia', async (req, res) => {
 
   try {
     const result = await addEnergyValue(min_hp, max_hp, capacitor);
-    res.json({ message: result });
+    res.json({ status: 'success', data: result });
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -246,7 +246,7 @@ app.post('/tipos_producto', async (req, res) => {
 
   try {
     const result = await addTipoProducto(tipo);
-    res.json({ message: result });
+    res.json({ status: 'success', data: result });
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -258,7 +258,7 @@ app.post('/caracteristicas', async (req, res) => {
 
   try {
     const result = await addCaracteristicas(caracteristicas);
-    res.json({ message: result });
+    res.json({ status: 'success', data: result });
   } catch (error) {
     console.error('Error en el servidor:', error);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -271,7 +271,7 @@ app.post('/caracteristicas/variables', async (req, res) => {
 
   try {
     const result = await addVariables(caracteristicas_variables);
-    res.status(201).json(result);
+    res.json({ status: 'success', data: result });
   } catch (error) {
     res.status(500).json({ error: 'Error al agregar variables de características' });
   }
@@ -284,7 +284,7 @@ app.put('/caracteristicas/:id_caracteristicas', async (req, res) => {
 
   try {
     const result = await updateCaracteristicas(caracteristicas);
-    res.status(200).json(result);
+    res.status(200).json({ status: 'success', data: result });
   } catch (error) {
     res.status(500).json({ error: 'Error al actualizar características' });
   }
@@ -298,7 +298,7 @@ app.put('/caracteristicas/variables/:id_caracteristicas', async (req, res) => {
 
   try {
     const result = await updateVariables(caracteristicas_variables);
-    res.status(200).json(result);
+    res.status(200).json({ status: 'success', data: result });
   } catch (error) {
     res.status(500).json({ error: 'Error al actualizar variables de características' });
   }

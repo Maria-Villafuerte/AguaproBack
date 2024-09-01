@@ -22,7 +22,7 @@ export async function getTiposProducto() {
 }
   
 // Añadir datos de tipo Producto
-async function checkTipoProducto() {
+async function checkTipoProducto(tipo) {
   try {
     const result = await conn.query(
       "SELECT id_tipo FROM Tipo_producto WHERE nombre = $1",
