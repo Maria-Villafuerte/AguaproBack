@@ -4,11 +4,13 @@ import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 
 import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
+
 import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
   addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables} from './db_characteristics.js'
 
-import { savePurchase, deletePurchase, registerUser, loginUser, getUserById,  
-  getUsers, getAllPedidos, getPedidoById, getPedidosByEstado} from './db.js'
+import {savePurchase, deletePurchase,getAllPedidos,getPedidoById,getPedidosByEstado,getProductosByPedido} from './db_pedidos.js'
+
+import { registerUser, loginUser, getUserById, getUsers} from './db.js'
 import authenticateToken from './middleware.js'
 
 const app = express()
@@ -206,10 +208,10 @@ app.get('/tipos_producto', async (req, res) => {
 
 //Añadír características
 app.post('/size', async (req, res) => {
-  const {min_gpm, max_gpm } = req.body;
+  const {min_gpm, max_gpm, range } = req.body;
 
   try {
-    const result = await addSizeValue(min_gpm, max_gpm);
+    const result = await addSizeValue(min_gpm, max_gpm, range);
     res.json({ message: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
@@ -422,3 +424,11 @@ app.get('/users', async (req, res) => {
    }
 })
 
+app.post('/authenticate', authenticateToken, async (req, res) => {
+
+  try {
+    res.status(201).json({ status: 'success', message: 'Authenticate successfully.' })
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message })
+  }
+})

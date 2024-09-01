@@ -1,18 +1,19 @@
-import pkg from 'pg'
-import dotenv from 'dotenv'
-const { Pool } = pkg
-dotenv.config()
+import jwt from 'jsonwebtoken';
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + '?sslmode=require'
-})
-
-pool.connect((err) => {
-  if (err) {
-    console.log('Error connecting to Postgres:', err)
-  } else {
-    console.log('Connected to Postgres')
+export default function authenticateToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  if (token == null) {
+    return res.status(401).send('No token provided');
   }
-})
 
-export default pool
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).send(`Forbidden: ${err.message}`);
+    }
+    req.user = user;
+    next();
+  });
+
+}
