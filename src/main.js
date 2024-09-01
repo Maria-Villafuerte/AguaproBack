@@ -208,10 +208,10 @@ app.get('/tipos_producto', async (req, res) => {
 
 //Añadír características
 app.post('/size', async (req, res) => {
-  const {min_gpm, max_gpm } = req.body;
+  const {min_gpm, max_gpm, range } = req.body;
 
   try {
-    const result = await addSizeValue(min_gpm, max_gpm);
+    const result = await addSizeValue(min_gpm, max_gpm, range);
     res.json({ message: result });
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });

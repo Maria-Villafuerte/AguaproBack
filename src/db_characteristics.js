@@ -56,7 +56,7 @@ export async function addTipoProducto(tipo) {
       "INSERT INTO Tipo_producto (id_tipo, nombre) VALUES ($1, $2)", 
       [id_tipo, tipo]
     );
-    return "Creado";
+    return id_tipo;
   } catch (error) {
     console.error('Error en la consulta SQL:', error);
     throw error;
@@ -99,7 +99,7 @@ export async function addEnergyValue(min_hp, max_hp, capacitor) {
         "INSERT INTO Energía (energia, min_hp, max_hp, capacitor) VALUES ($1, $2, $3, $4)", 
         [energia, min_hp, max_hp, capacitor]
       );
-      return "Creado";
+      return energia;
     } catch (error) {
       console.error('Error en la consulta SQL:', error);
       throw error;
@@ -153,7 +153,7 @@ export async function addConditionValue(Temperatura_liquida_min, Temperatura_liq
         [condiciones, Temperatura_liquida_min, Temperatura_liquida_max, Temperatura_Ambiente, presion]
       );
       
-      return "Creado";
+      return condiciones;
     } catch (error) {
       console.error('Error en la consulta SQL:', error);
       throw error;
