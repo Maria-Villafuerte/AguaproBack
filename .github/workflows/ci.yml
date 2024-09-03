@@ -26,8 +26,7 @@ jobs:
 
       - name: Test database connectivity
         run: |
-          set -e
-          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} pg_isready -h ${{ secrets.POSTGRES_HOST }} -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }}
+          pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
 
       - run: npm install
       - run: npm test
