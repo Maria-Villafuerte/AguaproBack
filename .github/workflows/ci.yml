@@ -10,10 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -26,6 +22,7 @@ jobs:
 
       - name: Test database connectivity
         run: |
+          echo "Testing connection to ${{ secrets.POSTGRES_HOST }} on port 5432"
           pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
 
       - run: npm install
@@ -40,4 +37,3 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
