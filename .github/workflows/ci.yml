@@ -26,9 +26,8 @@ jobs:
 
       - name: Test database connectivity
         run: |
-          pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }}
-        env:
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          set -e
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }}
 
       - run: npm install
       - run: npm test
@@ -41,4 +40,6 @@ jobs:
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
