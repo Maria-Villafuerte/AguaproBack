@@ -40,3 +40,4 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
