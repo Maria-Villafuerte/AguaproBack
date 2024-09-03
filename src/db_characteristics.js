@@ -175,7 +175,7 @@ async function checkSizeValue(min_gpm, max_gpm, range) {
       
       if (result.rows.length > 0) {
         // Si existe, devolver el 'Size'
-        return result.rows[0].Size;
+        return result.rows[0].size;
       }
       return 0;
     } catch (error) {
