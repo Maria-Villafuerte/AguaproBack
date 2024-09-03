@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main, QA-(testing)]  # Ajusta las ramas según tus necesidades
+    branches: [main, QA-(testing)]  # Ajusta las ramas según necesites
   pull_request:
     branches: [main]
 
@@ -22,6 +22,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Install PostgreSQL Client
+      run: sudo apt-get install -y postgresql-client
+
+    - name: Test database connectivity
+      run: pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
+
     - name: Install dependencies
       run: npm install
 
@@ -37,4 +43,3 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
