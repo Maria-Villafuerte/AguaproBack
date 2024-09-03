@@ -96,6 +96,7 @@ CREATE TABLE Tipos_estados (
 CREATE TABLE Pedidos (
     id_pedido INT PRIMARY KEY,
     estatus INT,
+    direccion VARCHAR(100),
     FOREIGN KEY (estatus) REFERENCES Tipos_estados(id_estado)
 );
 
