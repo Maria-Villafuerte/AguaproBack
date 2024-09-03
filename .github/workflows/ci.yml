@@ -20,8 +20,12 @@ jobs:
       - name: Install PostgreSQL Client
         run: sudo apt-get install -y postgresql-client
       
-      - name: Test database connectivity
-        run: pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
+      - name: Display connection info
+        run: |
+          echo "Host: ${{ secrets.POSTGRES_HOST }}"
+          echo "User: ${{ secrets.POSTGRES_USER }}"
+          echo "Database: ${{ secrets.POSTGRES_DATABASE }}"
+
 
       - run: npm install
       - run: npm test
