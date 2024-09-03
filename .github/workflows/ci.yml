@@ -21,9 +21,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install PostgreSQL Client
+        run: sudo apt-get install -y postgresql-client
+
       - name: Test database connectivity
         run: |
-          apt-get install -y postgresql-client
           pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }}
 
       - run: npm install
