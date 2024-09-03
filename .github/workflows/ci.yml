@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main]  # Ejecuta los tests en cada push a la rama "main"
+    branches: [QA-(testing)]  # Ejecuta los tests en cada push a la rama "QA-(testing)"
   pull_request:
     branches: [main]  # Ejecuta los tests en cada pull request a la rama "main"
 
@@ -22,3 +22,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm test
+        env:  # Configura las variables de entorno usando secrets
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
+          POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+          POSTGRES_URL_NO_SSL: ${{ secrets.POSTGRES_URL_NO_SSL }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
