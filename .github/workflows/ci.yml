@@ -2,44 +2,42 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main, QA-(testing)]  # Ajusta las ramas según necesites
+    branches: [ main, QA-(testing) ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      
+      - name: Install PostgreSQL Client
+        run: sudo apt-get install -y postgresql-client
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Print env variables (for debugging)
+        run: echo $POSTGRES_HOST $POSTGRES_USER $POSTGRES_DATABASE
+      
+      - name: Test database connectivity
+        run: pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
 
-    - name: Install PostgreSQL Client
-      run: sudo apt-get install -y postgresql-client
+      - name: Install dependencies
+        run: npm install
 
-    - name: Test database connectivity
-      run: pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
-      run: npm test
-      env:
-        POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-        POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
-        POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
-        POSTGRES_URL_NO_SSL: ${{ secrets.POSTGRES_URL_NO_SSL }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      - name: Run tests
+        run: npm test
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
+          POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+          POSTGRES_URL_NO_SSL: ${{ secrets.POSTGRES_URL_NO_SSL }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
