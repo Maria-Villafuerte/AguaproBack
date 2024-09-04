@@ -1,15 +1,17 @@
-import express from 'express'
-import cors from 'cors'
-import bodyParser from 'body-parser'
-import jwt from 'jsonwebtoken'
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import jwt from 'jsonwebtoken';
 
 // PRODUCTOS db_products
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js'
+import { getProductos, getProductById, deleteProduct, updateProduct, createProduct} from './db_products.js';
 // CLIENTES db_cliente
-import { saveCliente, getAllClientes, getOneCliente, editOneCliente, deleteOneCliente } from './db_cliente.js'
+import { saveCliente, getAllClientes, getOneCliente, editOneCliente, deleteOneCliente } from './db_cliente.js';
 // CARACTERISTICAS db_characteristics
-import { addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
-  addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables} from './db_characteristics.js'
+import { 
+  addEnergyValue, addConditionValue, addSizeValue, addCaracteristicas, getSize, getConditions, getEnergia,
+  addTipoProducto, getTiposProducto, updateCaracteristicas, addVariables, updateVariables 
+} from './db_characteristics.js';
 // PEDIDOS db_pedidos
 import { 
   savePurchase,  deletePurchase,   getAllPedidos,   getPedidoById,   getPedidosByEstado,   getProductosByPedido,  updatePedidoStatus,  updatePedidoDireccion,  updateProductosByPedido} from './db_pedidos.js'
@@ -24,8 +26,6 @@ app.use(express.json())
 app.use(bodyParser.json())
   
 app.use(cors())
-  
-const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello AguaPro!');
@@ -44,7 +44,7 @@ app.get('/productos', async (req, res) => {
    } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
    }
-})
+});
 
 // Obtener información de producto individual
 app.get('/productos/:productId', async (req, res) => {
@@ -111,13 +111,13 @@ app.put('/productos/:productId', async (req, res) => {
 });
 
 
-app.listen(port, () => {
-  console.log(`API escuchando en http://localhost:${port}`);
-});
 
 
 
-//Endpoints para características
+
+
+
+// Endpoints para características
 //Ver características
 app.get('/size', async (req, res) => {
   try {
@@ -132,7 +132,7 @@ app.get('/size', async (req, res) => {
    } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
    }
-})
+});
 
 app.get('/condiciones', async (req, res) => {
   try {
@@ -147,7 +147,7 @@ app.get('/condiciones', async (req, res) => {
    } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
    }
-})
+});
 
 app.get('/energia', async (req, res) => {
   try {
@@ -162,7 +162,7 @@ app.get('/energia', async (req, res) => {
    } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
    }
-})
+});
 
 app.get('/tipos_producto', async (req, res) => {
   try {
@@ -337,7 +337,7 @@ app.get('/users', async (req, res) => {
    } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
    }
-})
+});
 
 app.post('/authenticate', authenticateToken, async (req, res) => {
 
@@ -346,7 +346,7 @@ app.post('/authenticate', authenticateToken, async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 'failed', error: error.message })
   }
-})
+});
 
 
 // Client endpoints
@@ -565,3 +565,14 @@ app.put('/pedidos/:pedidoId/productos', async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// Exportamos app para poder usarla en los tests
+export default app;
+
+// Solo iniciamos el servidor si este archivo es ejecutado directamente
+if (process.env.NODE_ENV !== 'test') {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`API escuchando en http://localhost:${port}`);
+  });
+}
