@@ -24,13 +24,16 @@ jobs:
       - name: Print env variables (for debugging)
         run: echo $POSTGRES_HOST $POSTGRES_USER $POSTGRES_DATABASE
       
+      - name: Test network connectivity
+        run: ping -c 4 ${{ secrets.POSTGRES_HOST }}
+
       - name: Test database connectivity
         env:
           PGHOST: ${{ secrets.POSTGRES_HOST }}
           PGUSER: ${{ secrets.POSTGRES_USER }}
           PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           PGDATABASE: ${{ secrets.POSTGRES_DATABASE }}
-        run: pg_isready -h $PGHOST -p 5432 -U $PGUSER -d $PGDATABASE -t 1
+        run: pg_isready -h $PGHOST -p 5432 -U $PGUSER -d $PGDATABASE -t 5
 
       - name: Install dependencies
         run: npm install
