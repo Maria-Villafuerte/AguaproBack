@@ -24,8 +24,14 @@ jobs:
       - name: Print env variables (for debugging)
         run: echo $POSTGRES_HOST $POSTGRES_USER $POSTGRES_DATABASE
       
-      - name: Test network connectivity
-        run: ping -c 4 ${{ secrets.POSTGRES_HOST }}
+      - name: Test PostgreSQL TCP connectivity
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y telnet
+          telnet $PGHOST 5432
+        env:
+          PGHOST: ${{ secrets.POSTGRES_HOST }}
+
 
       - name: Test database connectivity
         env:
