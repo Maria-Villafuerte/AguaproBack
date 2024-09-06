@@ -24,13 +24,13 @@ jobs:
       - name: Print env variables (for debugging)
         run: echo $POSTGRES_HOST $POSTGRES_USER $POSTGRES_DATABASE
       
-      - name: Check PostgreSQL connection
-        run: pg_isready -h $POSTGRES_HOST -p 5432 -U $POSTGRES_USER -d $POSTGRES_DATABASE
+      - name: Test PostgreSQL SSL connection
+        run: psql "sslmode=require host=$POSTGRES_HOST dbname=$POSTGRES_DATABASE user=$POSTGRES_USER password=$POSTGRES_PASSWORD"
         env:
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
       - name: Test database connectivity
         env:
