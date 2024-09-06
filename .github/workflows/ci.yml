@@ -39,7 +39,7 @@ jobs:
           PGUSER: ${{ secrets.POSTGRES_USER }}
           PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           PGDATABASE: ${{ secrets.POSTGRES_DATABASE }}
-        run: pg_isready -h $PGHOST -p 5432 -U $PGUSER -d $PGDATABASE -t 5
+        run: pg_isready -h $PGHOST -p 5432 -U $PGUSER -d $PGDATABASE -t 15
 
       - name: Install dependencies
         run: npm install
