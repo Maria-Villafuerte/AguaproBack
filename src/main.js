@@ -14,7 +14,7 @@ import {
 } from './db_characteristics.js';
 // PEDIDOS db_pedidos
 import { 
-  savePurchase,  deletePurchase,   getAllPedidos,   getPedidoById,   getPedidosByEstado,   getProductosByPedido,  updatePedidoStatus,  updatePedidoDireccion,  updateProductosByPedido} from './db_pedidos.js'
+  savePurchase,  deletePurchase,   getAllPedidos,   getPedidoById,   getPedidosByEstado,   getProductosByPedido,  updatePedidoStatus,  updatePedidoDireccion,  updateProductosByPedido, searchPedidos} from './db_pedidos.js'
   // LOGIN db
 import { registerUser, loginUser, getUserById, getUsers} from './db.js'
 import authenticateToken from './middleware.js'
@@ -576,3 +576,19 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`API escuchando en http://localhost:${port}`);
   });
 }
+
+
+// searchPedidos route
+router.get('/search/:searchTerm', async (req, res) => {
+  const searchTerm = req.params.searchTerm;
+  try {
+    const pedidos = await searchPedidos(searchTerm);
+    if (pedidos.length === 0) {
+      return res.status(404).json({ status: 'error', message: 'No se encontraron pedidos' });
+    }
+    return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });
+  } catch (error) {
+    console.error('Error al buscar pedidos:', error);
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+});
