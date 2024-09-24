@@ -566,20 +566,8 @@ app.put('/pedidos/:pedidoId/productos', async (req, res) => {
   }
 });
 
-// Exportamos app para poder usarla en los tests
-export default app;
-
-// Solo iniciamos el servidor si este archivo es ejecutado directamente
-if (process.env.NODE_ENV !== 'test') {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`API escuchando en http://localhost:${port}`);
-  });
-}
-
-
 // searchPedidos route
-router.get('/search/:searchTerm', async (req, res) => {
+app.get('/search/:searchTerm', async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
     const pedidos = await searchPedidos(searchTerm);
@@ -592,3 +580,16 @@ router.get('/search/:searchTerm', async (req, res) => {
     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 });
+
+// Exportamos app para poder usarla en los tests
+export default app;
+
+// Solo iniciamos el servidor si este archivo es ejecutado directamente
+if (process.env.NODE_ENV !== 'test') {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`API escuchando en http://localhost:${port}`);
+  });
+}
+
+
