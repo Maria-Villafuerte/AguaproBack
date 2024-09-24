@@ -304,3 +304,45 @@ export async function updateProductosByPedido(pedidoId, productos) {
     return { success: false, message: 'Error al actualizar los productos del pedido.', error: error.message };
   }
 }
+
+export async function searchPedidos(searchTerm) {
+  try {
+    const query = `
+      SELECT DISTINCT
+        p.id_pedido, 
+        p.estatus, 
+        p.direccion, 
+        te.nombre AS estado, 
+        c.id_cliente, 
+        c.nombre AS cliente, 
+        f.monto_total, 
+        f.nit_empresa, 
+        f.id_descuento,
+        STRING_AGG(DISTINCT prod.nombre, ', ') AS productos
+      FROM Pedidos p
+      JOIN Tipos_estados te ON p.estatus = te.id_estado
+      JOIN Factura f ON p.id_pedido = f.id_pedido
+      JOIN Clientes c ON f.id_cliente = c.id_cliente
+      LEFT JOIN Recuento r ON p.id_pedido = r.Pedido_Fk
+      LEFT JOIN Productos prod ON r.Producto_Fk = prod.id_producto
+      WHERE 
+        c.nombre ILIKE $1 OR
+        f.nit_empresa ILIKE $1 OR
+        p.direccion ILIKE $1 OR
+        prod.nombre ILIKE $1
+      GROUP BY 
+        p.id_pedido, 
+        te.nombre, 
+        c.id_cliente, 
+        c.nombre, 
+        f.monto_total, 
+        f.nit_empresa, 
+        f.id_descuento
+    `;
+    const result = await conn.query(query, [`%${searchTerm}%`]);
+    return result.rows;
+  } catch (error) {
+    console.error('Error en la consulta SQL:', error);
+    throw error;
+  }
+}
