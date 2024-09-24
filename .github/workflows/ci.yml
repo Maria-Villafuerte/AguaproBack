@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, QA-(testing) ]
+    branches: [main, QA-(testing)]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -12,10 +12,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: '16.x'
       
       - name: Install PostgreSQL Client
         run: sudo apt-get install -y postgresql-client
@@ -23,8 +24,21 @@ jobs:
       - name: Print env variables (for debugging)
         run: echo $POSTGRES_HOST $POSTGRES_USER $POSTGRES_DATABASE
       
+      - name: Test PostgreSQL SSL connection
+        run: psql "sslmode=require host=$POSTGRES_HOST dbname=$POSTGRES_DATABASE user=$POSTGRES_USER password=$POSTGRES_PASSWORD"
+        env:
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
       - name: Test database connectivity
-        run: pg_isready -h ${{ secrets.POSTGRES_HOST }} -p 5432 -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DATABASE }} -t 1
+        env:
+          PGHOST: ${{ secrets.POSTGRES_HOST }}
+          PGUSER: ${{ secrets.POSTGRES_USER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PGDATABASE: ${{ secrets.POSTGRES_DATABASE }}
+        run: pg_isready -h $PGHOST -p 5432 -U $PGUSER -d $PGDATABASE -t 15
 
       - name: Install dependencies
         run: npm install

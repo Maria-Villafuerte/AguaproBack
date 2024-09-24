@@ -591,5 +591,3 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`API escuchando en http://localhost:${port}`);
   });
 }
-
-
