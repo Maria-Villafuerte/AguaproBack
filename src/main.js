@@ -579,7 +579,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 
 // searchPedidos route
-router.get('/search/:searchTerm', async (req, res) => {
+app.get('/search/:searchTerm', async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
     const pedidos = await searchPedidos(searchTerm);
