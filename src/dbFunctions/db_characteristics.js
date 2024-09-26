@@ -1,4 +1,4 @@
-import conn from './conn.js'
+import conn from '../conn.js'
 
 //Ver valores de características
 export async function getSize () {

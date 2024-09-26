@@ -1,4 +1,4 @@
-import conn from './conn.js'
+import conn from '../conn.js'
 
 export async function saveCliente(nombre, direccion, telefono, nit, user_reference) {
   try {

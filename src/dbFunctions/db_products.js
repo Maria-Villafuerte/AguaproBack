@@ -1,4 +1,4 @@
-import conn from './conn.js'
+import conn from '../conn.js'
 
 // Obtener todos los productos EN VENTA
 export async function getProductos () {
