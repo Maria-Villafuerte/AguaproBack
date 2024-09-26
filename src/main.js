@@ -34,6 +34,10 @@ app.use('', clientRoutes);
 import pedidosRoutes from './routes/pedidos.js';
 app.use('', pedidosRoutes);
 
+// Usar las rutas de users
+import statisticsRoutes from './routes/statistics.js';
+app.use('', statisticsRoutes);
+
 // Exportamos app para poder usarla en los tests
 export default app;
 

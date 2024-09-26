@@ -83,7 +83,9 @@ CREATE TABLE Clientes (
     nombre VARCHAR(50),
     direccion VARCHAR(100),
     telefono VARCHAR(8),
-    nit VARCHAR(10)
+    nit VARCHAR(10),
+    user_reference INT,
+    FOREIGN KEY (user_reference) REFERENCES users(id)
 );
 
 -- Tabla Tipos_estados
@@ -119,6 +121,7 @@ CREATE TABLE Factura (
     nit_empresa VARCHAR(10),
     monto_total DOUBLE PRECISION,
     id_descuento INT,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
     FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido),
     FOREIGN KEY (id_descuento) REFERENCES Codigos(id_codigo)
