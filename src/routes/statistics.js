@@ -6,7 +6,7 @@ import { getSales, getTotalSales, getTopProducts, getTopClients, getDailySales }
 
 // Get all sales
 router.get('/sales', async (req, res) => {
-    const { fechaInicio, fechaFin } = req.body;
+    const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getSales(fechaInicio, fechaFin);
         return res.status(200).json({ status: 'success', message: 'Se han obtenido las ventas.', data: ventas });
@@ -17,7 +17,7 @@ router.get('/sales', async (req, res) => {
 });
 
 router.get('/sales/sum', async (req, res) => {
-    const { fechaInicio, fechaFin } = req.body;
+    const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getTotalSales(fechaInicio, fechaFin);
         return res.status(200).json({ status: 'success', message: 'Se han obtenido las ventas.', data: ventas });
@@ -28,7 +28,7 @@ router.get('/sales/sum', async (req, res) => {
 });
 
 router.get('/sales/products', async (req, res) => {
-    const { fechaInicio, fechaFin } = req.body;
+    const { fechaInicio, fechaFin } = req.query;
     try {
         const productos = await getTopProducts(fechaInicio, fechaFin);
         return res.status(200).json({ status: 'success', message: 'Se han obtenido los productos', data: productos });
@@ -39,7 +39,7 @@ router.get('/sales/products', async (req, res) => {
 });
 
 router.get('/sales/clients', async (req, res) => {
-    const { fechaInicio, fechaFin } = req.body;
+    const { fechaInicio, fechaFin } = req.query;
     try {
         const clientes = await getTopClients(fechaInicio, fechaFin);
         return res.status(200).json({ status: 'success', message: 'Se han obtenido los clientes', data: clientes });
@@ -50,7 +50,7 @@ router.get('/sales/clients', async (req, res) => {
 });
 
 router.get('/sales/daily', async (req, res) => {
-    const { fechaInicio, fechaFin } = req.body;
+    const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getDailySales(fechaInicio, fechaFin);
         return res.status(200).json({ status: 'success', message: 'Se han obtenido las ventas', data: ventas });

@@ -4,8 +4,8 @@ import conn from '../conn.js'
 export async function getSales (fechaInicio, fechaFin) {
     try {
         const result = await conn.query(`SELECT created_date, monto_total, id_pedido, id_cliente FROM Factura
-        WHERE created_date BETWEEN $1 AND $2`, 
-        [fechaInicio + ' 00:00:00', fechaFin + ' 23:59:59']);
+        WHERE DATE(created_date) BETWEEN $1 AND $2`, 
+        [fechaInicio , fechaFin]);
         return result.rows.length > 0 ? result.rows : 'No sales found.'
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -19,8 +19,8 @@ export async function getTotalSales(fechaInicio, fechaFin) {
         const result = await conn.query(`
             SELECT SUM(monto_total) as total_ventas
             FROM Factura
-            WHERE created_date BETWEEN $1 AND $2`, 
-            [fechaInicio + ' 00:00:00', fechaFin + ' 23:59:59']);
+            WHERE DATE(created_date) BETWEEN $1 AND $2`, 
+            [fechaInicio , fechaFin]);
         return result.rows.length > 0 ? result.rows[0].total_ventas : 'No sales found.';
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -36,10 +36,10 @@ export async function getTopProducts (fechaInicio, fechaFin) {
             JOIN pedidos s ON s.id_pedido = f.id_pedido
             JOIN recuento r ON r.pedido_fk = s.id_pedido
             JOIN productos p ON p.id_producto = r.producto_fk
-            WHERE created_date BETWEEN $1 AND $2
+            WHERE DATE(created_date) BETWEEN $1 AND $2
             GROUP BY p.id_producto
             ORDER BY AVG(r.cantidad) DESC
-            LIMIT 5`, [fechaInicio + ' 00:00:00', fechaFin + ' 23:59:59']);
+            LIMIT 5`, [fechaInicio , fechaFin]);
         return result.rows.length > 0 ? result.rows : 'No sales found.'
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -53,11 +53,11 @@ export async function getTopClients(fechaInicio, fechaFin) {
         const result = await conn.query(`
             SELECT id_cliente, c.nombre, COUNT(id_pedido) as total_pedidos
             FROM Factura f NATURAL JOIN clientes c
-            WHERE created_date BETWEEN $1 AND $2
+            WHERE DATE(created_date) BETWEEN $1 AND $2
             GROUP BY id_cliente, c.nombre
             ORDER BY total_pedidos DESC
             LIMIT 5`, 
-            [fechaInicio + ' 00:00:00', fechaFin + ' 23:59:59']);
+            [fechaInicio , fechaFin]);
         return result.rows.length > 0 ? result.rows : 'No data found.';
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -71,10 +71,10 @@ export async function getDailySales(fechaInicio, fechaFin) {
         const result = await conn.query(`
             SELECT DATE(created_date) as fecha, SUM(monto_total) as total_ventas
             FROM Factura
-            WHERE created_date BETWEEN $1 AND $2
+            WHERE DATE(created_date) BETWEEN $1 AND $2
             GROUP BY DATE(created_date)
             ORDER BY fecha`, 
-            [fechaInicio + ' 00:00:00', fechaFin + ' 23:59:59']);
+            [fechaInicio, fechaFin]);
         return result.rows.length > 0 ? result.rows : 'No sales found.';
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
