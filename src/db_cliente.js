@@ -41,7 +41,7 @@ export async function getOneCliente(id) {
 }
 
 export async function editOneCliente(id, nombre, direccion, telefono, nit, user_reference) {
-  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, nit = $6 WHERE id_cliente = $1 RETURNING *';
+  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, user_reference = $6 WHERE id_cliente = $1 RETURNING *';
   const values = [id, nombre, direccion, telefono, nit, user_reference];
   const result = await conn.query(sql, values);
   return result.rows[0];
