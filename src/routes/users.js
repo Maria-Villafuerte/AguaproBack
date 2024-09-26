@@ -75,3 +75,5 @@ router.post('/authenticate', authenticateToken, async (req, res) => {
       res.status(500).json({ status: 'failed', error: error.message })
     }
 });
+
+export default router;
