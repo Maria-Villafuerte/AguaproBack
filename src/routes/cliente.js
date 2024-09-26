@@ -72,3 +72,5 @@ router.delete('/clientes/:id', async (req, res) => {
     res.status(500).json({ status: 'failed', error: 'Error interno del servidor' });
   }
 });
+
+export default router;

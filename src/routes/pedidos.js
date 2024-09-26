@@ -169,3 +169,5 @@ router.get('/search/:searchTerm', async (req, res) => {
     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 });
+
+export default router;

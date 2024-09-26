@@ -166,3 +166,5 @@ router.put('/caracteristicas/variables/:id_caracteristicas', async (req, res) =>
     res.status(500).json({ error: 'Error al actualizar variables de características' });
   }
 });
+
+export default router;
