@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 import { registerUser, loginUser, getUserById, getUsers} from '../dbFunctions/db.js'
-import authenticateToken from './middleware.js'
+import authenticateToken from '../middleware.js'
 
 
 router.post('/register', async (req, res) => {
