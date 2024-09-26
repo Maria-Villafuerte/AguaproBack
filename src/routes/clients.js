@@ -5,7 +5,7 @@ const router = express.Router();
 import { saveCliente, getAllClientes, getOneCliente, editOneCliente, deleteOneCliente } from '../dbFunctions/db_cliente.js';
 
 // Client endpoints
-app.post('/clientes', async (req, res) => {
+router.post('/clientes', async (req, res) => {
     const { nombre, direccion, telefono, nit } = req.body;
     try {
       const newCliente = await saveCliente(nombre, direccion, telefono, nit);
@@ -16,7 +16,7 @@ app.post('/clientes', async (req, res) => {
     }
   });
   
-  app.get('/clientes', async (req, res) => {
+  router.get('/clientes', async (req, res) => {
     try {
       const clientes = await getAllClientes();
       res.status(200).json({ status: 'success', message: 'Clientes obtenidos exitosamente', data: clientes });
@@ -26,7 +26,7 @@ app.post('/clientes', async (req, res) => {
     }
   });
   
-  app.get('/clientes/:id', async (req, res) => {
+  router.get('/clientes/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     try {
       const cliente = await getOneCliente(id);
@@ -41,7 +41,7 @@ app.post('/clientes', async (req, res) => {
     }
   });
   
-  app.put('/clientes/:id', async (req, res) => {
+  router.put('/clientes/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const { nombre, direccion, telefono, nit } = req.body;
     try {
@@ -58,7 +58,7 @@ app.post('/clientes', async (req, res) => {
   });
   
   // New delete endpoint
-  app.delete('/clientes/:id', async (req, res) => {
+  router.delete('/clientes/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     try {
       const deletedCliente = await deleteOneCliente(id);
