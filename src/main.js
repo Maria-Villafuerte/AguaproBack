@@ -14,8 +14,9 @@ import {
 } from './db_characteristics.js';
 // PEDIDOS db_pedidos
 import { 
-  savePurchase,  deletePurchase,   getAllPedidos,   getPedidoById,   getPedidosByEstado,   getProductosByPedido,  updatePedidoStatus,  updatePedidoDireccion,  updateProductosByPedido, searchPedidos} from './db_pedidos.js'
-  // LOGIN db
+  savePurchase,  deletePurchase,   getAllPedidos,   getPedidoById,   getPedidosByEstado,   getProductosByPedido,  
+  updatePedidoStatus,  updatePedidoDireccion,  updateProductosByPedido, searchPedidos} from './db_pedidos.js'
+// LOGIN db
 import { registerUser, loginUser, getUserById, getUsers} from './db.js'
 import authenticateToken from './middleware.js'
 
@@ -351,9 +352,9 @@ app.post('/authenticate', authenticateToken, async (req, res) => {
 
 // Client endpoints
 app.post('/clientes', async (req, res) => {
-  const { nombre, direccion, telefono, nit } = req.body;
+  const { nombre, direccion, telefono, nit, user_reference } = req.body;
   try {
-    const newCliente = await saveCliente(nombre, direccion, telefono, nit);
+    const newCliente = await saveCliente(nombre, direccion, telefono, nit, user_reference);
     res.status(201).json({ status: 'success', message: 'Cliente creado exitosamente', data: newCliente });
   } catch (error) {
     console.error('Error al crear cliente:', error);
@@ -388,9 +389,9 @@ app.get('/clientes/:id', async (req, res) => {
 
 app.put('/clientes/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const { nombre, direccion, telefono, nit } = req.body;
+  const { nombre, direccion, telefono, nit, user_reference } = req.body;
   try {
-    const updatedCliente = await editOneCliente(id, nombre, direccion, telefono, nit);
+    const updatedCliente = await editOneCliente(id, nombre, direccion, telefono, nit, user_reference);
     if (updatedCliente) {
       res.status(200).json({ status: 'success', message: 'Cliente actualizado exitosamente', data: updatedCliente });
     } else {

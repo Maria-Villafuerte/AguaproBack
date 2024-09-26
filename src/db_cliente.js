@@ -1,6 +1,6 @@
 import conn from './conn.js'
 
-export async function saveCliente(nombre, direccion, telefono, nit) {
+export async function saveCliente(nombre, direccion, telefono, nit, user_reference) {
   try {
     // Start a transaction
     await conn.query('BEGIN');
@@ -13,8 +13,8 @@ export async function saveCliente(nombre, direccion, telefono, nit) {
     const newId = maxId + 1;
 
     // Insert the new client with the new id
-    const sql = 'INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const values = [newId, nombre, direccion, telefono, nit];
+    const sql = 'INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const values = [newId, nombre, direccion, telefono, nit, user_reference];
     const result = await conn.query(sql, values);
 
     // Commit the transaction
@@ -40,9 +40,9 @@ export async function getOneCliente(id) {
   return result.rows[0];
 }
 
-export async function editOneCliente(id, nombre, direccion, telefono, nit) {
-  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5 WHERE id_cliente = $1 RETURNING *';
-  const values = [id, nombre, direccion, telefono, nit];
+export async function editOneCliente(id, nombre, direccion, telefono, nit, user_reference) {
+  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, nit = $6 WHERE id_cliente = $1 RETURNING *';
+  const values = [id, nombre, direccion, telefono, nit, user_reference];
   const result = await conn.query(sql, values);
   return result.rows[0];
 }
