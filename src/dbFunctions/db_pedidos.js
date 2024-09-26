@@ -1,4 +1,4 @@
-import conn from './conn.js'
+import conn from '../conn.js'
 
 export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento, direccion) {
   try {
