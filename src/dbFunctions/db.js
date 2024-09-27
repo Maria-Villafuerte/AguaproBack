@@ -60,3 +60,38 @@ export async function getUsers () {
   return result.rows.length > 0 ? result.rows : 'No users found.'
 }
 
+// Eliminar usuario
+export async function deleteUser(id) {
+  try {
+    const sql = 'DELETE FROM users WHERE id = $1';
+    await conn.query(sql, [id]);
+    return true;
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
+    throw error;
+  }
+}
+
+// Actualizar usuario (username, email)
+export async function updateUser(id, username, email) {
+  try {
+    const sql = 'UPDATE users SET username = $1, email = $2 WHERE id = $3';
+    await conn.query(sql, [username, email, id]);
+    return true;
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
+    throw error;
+  }
+}
+
+// Cambiar rol de usuario
+export async function updateUserRole(id, role) {
+  try {
+    const sql = 'UPDATE users SET role = $1 WHERE id = $2';
+    await conn.query(sql, [role, id]);
+    return true;
+  } catch (error) {
+    console.error('Error al cambiar el rol del usuario:', error);
+    throw error;
+  }
+}

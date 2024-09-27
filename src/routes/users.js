@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-import { registerUser, loginUser, getUserById, getUsers} from '../dbFunctions/db.js'
+import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole} from '../dbFunctions/db.js'
 import authenticateToken from '../middleware.js'
 
 router.post('/register', async (req, res) => {
@@ -75,5 +75,56 @@ router.post('/authenticate', authenticateToken, async (req, res) => {
       res.status(500).json({ status: 'failed', error: error.message })
     }
 });
+
+// Eliminar usuario
+router.delete('/user/:id', async (req, res) => {
+  const id = req.params.id;
+  
+  try {
+    const result = await deleteUser(id);
+    if (result) {
+      res.status(200).json({ status: 'success', message: 'User deleted successfully.' });
+    } else {
+      res.status(404).json({ status: 'failed', message: 'User not found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Actualizar usuario (username y email)
+router.put('/user/:id', async (req, res) => {
+  const id = req.params.id;
+  const { username, email } = req.body;
+  
+  try {
+    const result = await updateUser(id, username, email);
+    if (result) {
+      res.status(200).json({ status: 'success', message: 'User updated successfully.' });
+    } else {
+      res.status(404).json({ status: 'failed', message: 'User not found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Cambiar rol de usuario
+router.put('/user/:id/role', async (req, res) => {
+  const id = req.params.id;
+  const { role } = req.body;
+  
+  try {
+    const result = await updateUserRole(id, role);
+    if (result) {
+      res.status(200).json({ status: 'success', message: 'User role updated successfully.' });
+    } else {
+      res.status(404).json({ status: 'failed', message: 'User not found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
 
 export default router;
