@@ -35,4 +35,16 @@ describe('POST /login', () => {
     expect(response.status).toBe(401);
     expect(response.body.status).toBe('failed');
   });
+
+  it('should fail to log in with no credentials', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({
+        username: '',
+        password: ''
+      });
+
+    expect(response.status).toBe(401);
+    expect(response.body.status).toBe('failed');
+  });
 });
