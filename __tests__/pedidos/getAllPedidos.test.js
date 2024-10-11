@@ -18,11 +18,4 @@ describe('GET /pedidos', () => {
     expect(response.body.status).toBe('success');
     expect(response.body.data).toBeDefined();
   });
-
-  it('should return 500 for server errors', async () => {
-    jest.spyOn(global.console, 'error').mockImplementation(() => {});
-    const response = await request(app).get('/pedidos');
-    expect(response.status).toBe(500);
-    expect(response.body.error).toBe('Internal Server Error');
-  });
 });

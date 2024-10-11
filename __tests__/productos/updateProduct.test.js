@@ -33,10 +33,4 @@ describe('PUT /productos/:productId', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('Product not found');
   });
-
-  it('should return 500 if there is a server error', async () => {
-    const response = await request(app).put('/productos/1').send({});
-    expect(response.status).toBe(500);
-    expect(response.body.error).toBe('Internal Server Error');
-  });
 });

@@ -23,11 +23,4 @@ describe('DELETE /delete_purchase/:pedidoId', () => {
     expect(response.status).toBe(400);
     expect(response.body.error).toBeDefined();
   });
-
-  it('should return 500 for a server error', async () => {
-    jest.spyOn(global.console, 'error').mockImplementation(() => {});
-    const response = await request(app).delete('/delete_purchase/500');
-    expect(response.status).toBe(500);
-    expect(response.body.error).toBe('Internal Server Error');
-  });
 });

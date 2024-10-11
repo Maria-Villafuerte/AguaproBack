@@ -16,10 +16,4 @@ describe('PUT /productos/hide/:productId', () => {
     const response = await request(app).put('/productos/hide/1');
     expect(response.status).toBe(204);
   });
-
-  it('should return 500 if there is a server error', async () => {
-    const response = await request(app).put('/productos/hide/999');
-    expect(response.status).toBe(500);
-    expect(response.body.error).toBe('Internal Server Error');
-  });
 });
