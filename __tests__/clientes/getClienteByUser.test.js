@@ -11,10 +11,10 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('GET /clientes/:user_reference', () => {
+describe('GET /clientes/user/:user_reference', () => {
   it('should retrieve the client successfully by user_reference', async () => {
-    const user_reference = 1; // Ejemplo de referencia de usuario válida
-    const response = await request(app).get(`/clientes/${user_reference}`);
+    const user_reference = 2; // Ejemplo de referencia de usuario válida
+    const response = await request(app).get(`/clientes/user/${user_reference}`);
     
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
@@ -24,7 +24,7 @@ describe('GET /clientes/:user_reference', () => {
 
   it('should return 404 if the client is not found', async () => {
     const user_reference = 9999; // Ejemplo de referencia de usuario inexistente
-    const response = await request(app).get(`/clientes/${user_reference}`);
+    const response = await request(app).get(`/clientes/user/${user_reference}`);
     
     expect(response.status).toBe(404);
     expect(response.body.status).toBe('failed');

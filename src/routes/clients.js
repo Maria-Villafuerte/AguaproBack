@@ -42,7 +42,7 @@ router.post('/clientes', async (req, res) => {
     }
   });
 
-  router.get('/clientes/:user_reference', async (req, res) => {
+  router.get('/clientes/user/:user_reference', async (req, res) => {
     const user_reference = parseInt(req.params.user_reference, 10);
     try {
       const cliente = await getOneClienteByUser(user_reference);
