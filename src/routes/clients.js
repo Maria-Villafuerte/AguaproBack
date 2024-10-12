@@ -89,7 +89,7 @@ router.post('/clientes', async (req, res) => {
     }
   });
 
-  router.put('/clientes/:id', async (req, res) => {
+  router.put('/clientes/user/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const { user_reference } = req.body;
     try {

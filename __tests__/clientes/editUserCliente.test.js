@@ -11,14 +11,14 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('PUT /clientes/:id', () => {
+describe('PUT /clientes/user/:id', () => {
   it('should update the client successfully and return 200', async () => {
     const id = 1; // ID del cliente válido para actualizar
     const updatedClientData = {
       user_reference: 3 // Ejemplo de nuevos datos de referencia de usuario
     };
     
-    const response = await request(app).put(`/clientes/${id}`).send(updatedClientData);
+    const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
     
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
@@ -32,7 +32,7 @@ describe('PUT /clientes/:id', () => {
       user_reference: 4
     };
 
-    const response = await request(app).put(`/clientes/${id}`).send(updatedClientData);
+    const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
     
     expect(response.status).toBe(404);
     expect(response.body.status).toBe('failed');
@@ -45,7 +45,7 @@ describe('PUT /clientes/:id', () => {
       user_reference: 12345 // ID inexistente de usuario
     };
 
-    const response = await request(app).put(`/clientes/${id}`).send(updatedClientData);
+    const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
     
     expect(response.status).toBe(404);
     expect(response.body.status).toBe('failed');
