@@ -29,7 +29,7 @@ describe('PUT /clientes/user/:id', () => {
   it('should return 404 if the client is not found', async () => {
     const id = 9999; // ID inexistente de cliente
     const updatedClientData = {
-      user_reference: 4
+      user_reference: 15
     };
 
     const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
