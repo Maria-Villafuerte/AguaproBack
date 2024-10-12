@@ -1,18 +1,32 @@
 import express from 'express';
 
 // PRODUCTOS db_products
-import { getProductos, getProductById, deleteProduct, updateProduct, createProduct } from '../dbFunctions/db_products.js';
+import { getProductos, getVisibleProducts, getProductById, deleteProduct, updateProduct, createProduct } from '../dbFunctions/db_products.js';
 
 const router = express.Router();
 
 // Obtener todos los productos
 router.get('/productos', async (req, res) => {
     try {
-        const posts = await getProductos();
-        if (posts !== 'No posts found.') {
-            res.status(200).json({ status: 'success', message: 'Posts retrieved successfully.', data: posts });
+        const products = await getProductos();
+        if (products !== 'No products found.') {
+            res.status(200).json({ status: 'success', message: 'products retrieved successfully.', data: products });
         } else {
-            res.status(404).json({ status: 'failed', message: 'No posts found.' });
+            res.status(404).json({ status: 'failed', message: 'No products found.' });
+        }
+    } catch (error) {
+        res.status(500).json({ status: 'failed', error: error.message });
+    }
+});
+
+// Obtener todos los productos visibles
+router.get('/catalogo', async (req, res) => {
+    try {
+        const products = await getVisibleProducts();
+        if (products !== 'No products found.') {
+            res.status(200).json({ status: 'success', message: 'products retrieved successfully.', data: products });
+        } else {
+            res.status(404).json({ status: 'failed', message: 'No products found.' });
         }
     } catch (error) {
         res.status(500).json({ status: 'failed', error: error.message });
