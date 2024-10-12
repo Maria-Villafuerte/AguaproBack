@@ -40,6 +40,12 @@ export async function getOneCliente(id) {
   return result.rows[0];
 }
 
+export async function getOneClienteByUser(user_reference) {
+  const sql = 'SELECT * FROM Clientes WHERE user_reference = $1';
+  const result = await conn.query(sql, [user_reference]);
+  return result.rows[0];
+}
+
 export async function editOneCliente(id, nombre, direccion, telefono, nit, user_reference) {
   const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, user_reference = $6 WHERE id_cliente = $1 RETURNING *';
   const values = [id, nombre, direccion, telefono, nit, user_reference];
@@ -50,5 +56,12 @@ export async function editOneCliente(id, nombre, direccion, telefono, nit, user_
 export async function deleteOneCliente(id) {
   const sql = 'DELETE FROM Clientes WHERE id_cliente = $1 RETURNING *';
   const result = await conn.query(sql, [id]);
+  return result.rows[0];
+}
+
+export async function editUserCliente(id, user_reference) {
+  const sql = 'UPDATE Clientes SET user_reference = $2 WHERE id_cliente = $1 RETURNING *';
+  const values = [id, user_reference];
+  const result = await conn.query(sql, values);
   return result.rows[0];
 }
