@@ -2,7 +2,7 @@ import conn from '../conn.js'
 
 // Obtener todos los productos
 export async function getProductos () {
-    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
+    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, p.estado, s.range as size_range,
       v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
       c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
       s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
