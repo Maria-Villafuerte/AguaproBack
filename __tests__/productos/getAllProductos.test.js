@@ -16,7 +16,7 @@ describe('GET /productos', () => {
     const response = await request(app).get('/productos');
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
-    expect(response.body.message).toBe('productos retrieved successfully.');
+    expect(response.body.message).toBe('products retrieved successfully.');
     expect(response.body.data).toBeDefined();
   });
 });
