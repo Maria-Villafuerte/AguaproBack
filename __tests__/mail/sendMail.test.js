@@ -1,6 +1,6 @@
 // mailer.test.js
 import createTransport from 'nodemailer';
-import sendEmail from './mailer.js';
+import sendEmail from '../../src/mailer.js';
 
 // Simula el transportador de Nodemailer
 jest.mock('nodemailer');
