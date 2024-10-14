@@ -93,7 +93,7 @@ router.post('/clientes', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const { user_reference } = req.body;
     try {
-      const updatedCliente = await editUserCliente(user_reference);
+      const updatedCliente = await editUserCliente(id, user_reference);
       if (updatedCliente) {
         res.status(200).json({ status: 'success', message: 'Cliente actualizado exitosamente', data: updatedCliente });
       } else {
