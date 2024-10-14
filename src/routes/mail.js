@@ -6,10 +6,12 @@ import nodemailer from 'nodemailer';
 
 // Configura el transportador
 let transporter = nodemailer.createTransport({
-    service: 'Gmail', 
+    host: "smtp.gmail.com", 
+    port: 465,
+    secure: true,
     auth: {
         user: 'aguatesaautomatizado@gmail.com',
-        pass: 'Auto_correos1410'
+        pass: 'hdretlctazlmondj'
     }
 });
 

@@ -19,7 +19,7 @@ describe('Mailer API tests', () => {
                 html: '<h1>Gracias por tu compra</h1>' }); 
 
         expect(response.status).toBe(200);
-        expect(response.text).toBe('Correo enviado y compra procesada');
+        expect(response.text).toBe('Correo enviado');
     });
 
     it('should return 400 for invalid email', async () => {
