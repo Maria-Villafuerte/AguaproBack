@@ -1,5 +1,6 @@
 import { sendEmail } from '../../src/routes/mail.js';
 import nodemailer from 'nodemailer';
+import app from '../../src/main.js';
 
 let server;
 
