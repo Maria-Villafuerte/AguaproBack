@@ -85,6 +85,21 @@ export async function updateProduct(productId, nombre, descripción, tipo_produc
     }
 }
 
+// Editar disponibilidad producto
+export async function updateProductDisp(productId, size, disponibilidad) {
+  try {
+      const result = await conn.query(
+      `UPDATE caracteristicas_variables SET disponibilidad = $3 
+      WHERE size = $2 AND id_caracteristicas = (SELECT id_caracteristicas FROM características WHERE producto = $1)`,
+      [productId, size, disponibilidad]
+      );
+      return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
+  } catch (error) {
+      console.error('Error en la consulta SQL:', error);
+      throw error;
+  }
+}
+
 // Crear producto
 export async function createProduct(product) {
     const { nombre, descripción, tipo_producto } = product;
