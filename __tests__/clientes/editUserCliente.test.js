@@ -15,7 +15,7 @@ describe('PUT /clientes/user/:id', () => {
   it('should update the client successfully and return 200', async () => {
     const id = 1; // ID del cliente válido para actualizar
     const updatedClientData = {
-      user_reference: 3 // Ejemplo de nuevos datos de referencia de usuario
+      user_reference: 25 // Ejemplo de nuevos datos de referencia de usuario
     };
     
     const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
