@@ -38,6 +38,10 @@ app.use('', pedidosRoutes);
 import statisticsRoutes from './routes/statistics.js';
 app.use('', statisticsRoutes);
 
+// Usar la ruta de mail
+import mailRoute from './routes/mail.js';
+app.use('', mailRoute);
+
 // Exportamos app para poder usarla en los tests
 export default app;
 
