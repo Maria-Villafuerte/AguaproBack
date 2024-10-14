@@ -44,7 +44,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --detectOpenHandles
         env:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
