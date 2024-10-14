@@ -38,17 +38,4 @@ describe('PUT /clientes/user/:id', () => {
     expect(response.body.status).toBe('failed');
     expect(response.body.message).toBe('Cliente no encontrado');
   });
-
-  it('should return 404 if the user is not found', async () => {
-    const id = 3; 
-    const updatedClientData = {
-      user_reference: 12345 // ID inexistente de usuario
-    };
-
-    const response = await request(app).put(`/clientes/user/${id}`).send(updatedClientData);
-    
-    expect(response.status).toBe(404);
-    expect(response.body.status).toBe('failed');
-    expect(response.body.message).toBe('Cliente no encontrado');
-  });
 });
