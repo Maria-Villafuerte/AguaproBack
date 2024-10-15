@@ -1,7 +1,7 @@
 import express from 'express';
 
 // PRODUCTOS db_products
-import { getProductos, getVisibleProducts, getProductById, deleteProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
+import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, deleteProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
 
 const router = express.Router();
 
@@ -23,6 +23,20 @@ router.get('/productos', async (req, res) => {
 router.get('/catalogo', async (req, res) => {
     try {
         const products = await getVisibleProducts();
+        if (products !== 'No products found.') {
+            res.status(200).json({ status: 'success', message: 'products retrieved successfully.', data: products });
+        } else {
+            res.status(404).json({ status: 'failed', message: 'No products found.' });
+        }
+    } catch (error) {
+        res.status(500).json({ status: 'failed', error: error.message });
+    }
+});
+
+// Obtener todos los productos ocultos
+router.get('/catalogooculto', async (req, res) => {
+    try {
+        const products = await getOcultoProducts();
         if (products !== 'No products found.') {
             res.status(200).json({ status: 'success', message: 'products retrieved successfully.', data: products });
         } else {

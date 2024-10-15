@@ -35,6 +35,25 @@ export async function getVisibleProducts() {
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
+// Obtener todos los productos OCULTO
+export async function getOcultoProducts() {
+  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
+    v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
+    c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
+    s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
+    t.temperatura_ambiente, t.presion, c.id_caracteristicas
+    FROM Productos p
+    JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
+    JOIN características c ON p.id_producto = c.producto
+    JOIN energía e ON c.energia = e.energia
+    JOIN condiciones t ON c.condiciones = t.condiciones
+    JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
+    JOIN size s ON v.size = s.size
+    WHERE estado = 'oculto'`)
+  return result.rows.length > 0 ? result.rows : 'No posts found.'
+}
+
+
 // Obtener productos por ID
 export async function getProductById(productId) {
     try {
