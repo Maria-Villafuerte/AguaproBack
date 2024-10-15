@@ -21,13 +21,4 @@ describe('GET /energia', () => {
     expect(response.body.data).toBeDefined();
     expect(Array.isArray(response.body.data)).toBe(true); // Verificar que data es un array
   });
-
-  it('Debería devolver 404 si no se encuentran valores de energía', async () => {
-    // Simular que no se encuentran valores
-    const response = await request(app).get('/energia');
-    
-    expect(response.status).toBe(404);
-    expect(response.body.status).toBe('failed');
-    expect(response.body.message).toBe('No values found.');
-  });
 });

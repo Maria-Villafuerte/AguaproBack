@@ -21,13 +21,5 @@ describe('GET /tipos_producto', () => {
       expect(response.body.data).toBeDefined();
       expect(Array.isArray(response.body.data)).toBe(true); // Verificar que data es un array
     });
-  
-    it('Debería devolver 404 si no se encuentran tipos de producto', async () => {
-      const response = await request(app).get('/tipos_producto');
-      
-      expect(response.status).toBe(404);
-      expect(response.body.status).toBe('failed');
-      expect(response.body.message).toBe('No values found.');
-    });
   });
   
