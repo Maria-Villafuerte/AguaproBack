@@ -11,12 +11,11 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('Mailer API tests', () => {
+describe('Mailer API test for service', () => {
     it('should send an email confirmation', async () => {
         const response = await request(app)
-            .post('/confirmacion')
-            .send({ mailto: 'con22787@uvg.edu.gt', subject: 'Gracias por tu compra en Aguatesa en línea', 
-                html: '<h1>Gracias por tu compra</h1>' }); 
+            .post('/confirmacion/servicio')
+            .send({ mailto: 'con22787@uvg.edu.gt'}); 
 
         expect(response.status).toBe(200);
         expect(response.text).toBe('Correo enviado');
@@ -24,7 +23,7 @@ describe('Mailer API tests', () => {
 
     it('should return 400 for invalid email', async () => {
         const response = await request(app)
-            .post('/confirmacion')
+            .post('/confirmacion/servicio')
             .send({ mailto: 'invalid-email' });
 
         expect(response.status).toBe(400);
