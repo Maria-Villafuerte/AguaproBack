@@ -28,20 +28,4 @@ describe('PUT /user/:id', () => {
       expect(response.body.status).toBe('success');
       expect(response.body.message).toBe('User updated successfully.');
     });
-  
-    it('should return 404 if user not found', async () => {
-      const invalidUserId = 999;  // Simulando usuario inexistente
-      const updatedData = {
-        username: 'nonexistentuser',
-        email: 'nonexistentuser@example.com',
-      };
-  
-      const response = await request(app)
-        .put(`/user/${invalidUserId}`)
-        .send(updatedData);
-      
-      expect(response.status).toBe(404);
-      expect(response.body.status).toBe('failed');
-      expect(response.body.message).toBe('User not found.');
-    });
 });

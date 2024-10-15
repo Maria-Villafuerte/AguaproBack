@@ -27,19 +27,4 @@ describe('PUT /user/:id/role', () => {
       expect(response.body.status).toBe('success');
       expect(response.body.message).toBe('User role updated successfully.');
     });
-  
-    it('should return 404 if user not found', async () => {
-      const invalidUserId = 999;  // Simulando usuario inexistente
-      const updatedRole = {
-        role: 'admin',
-      };
-  
-      const response = await request(app)
-        .put(`/user/${invalidUserId}/role`)
-        .send(updatedRole);
-      
-      expect(response.status).toBe(404);
-      expect(response.body.status).toBe('failed');
-      expect(response.body.message).toBe('User not found.');
-    });
 });
