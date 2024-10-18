@@ -32,7 +32,7 @@ router.post('/confirmacion/pedido', async (req, res) => {
     const { mailto } = req.body;
 
     let subject = 'Gracias por tu compra en Aguatesa en línea'
-    let html = '<h1>Gracias por tu compra</h1>'
+    let html = '<h1>¡Gracias por comprar en Aguatesa!</h1> <p>Le daremos seguimiento a tu pedido y lo puedes esperar de X a X días hábiles. Si tienes alguna duda o inconveniente no dudes en contactarnos.</p> <footer> <Strong>Teléfono:</Strong> (502) 6670-3030 / 6631-1845 <Strong>Correo:</Strong> ventas@aguatesa.com ventas2@aguatesa.com </footer>'
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
