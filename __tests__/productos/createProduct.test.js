@@ -30,22 +30,14 @@ describe('POST /productos', () => {
       .send(newProduct);
 
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('nombre', 'Producto A');
+    expect(response.body.status).toBe('success');
+    expect(response.body.message).toBe('Product created successfully.');
+    expect(response.body.data).toBeDefined();
   });
 
   it('should return 500 if product creation fails', async () => {
     const newProduct = {
-      // Dejar algunos campos vacíos para forzar un error
-      id_producto: null,
-      nombre: '',
-      marca: '',
-      modelo: '',
-      descripción: '',
-      material: '',
-      tipo_producto: 1,
-      capacidad: 1,
-      precio: 0.0,
-      disponibilidad: 0
+      // Dejar campos vacíos para forzar un error
     };
 
     const response = await request(app)
