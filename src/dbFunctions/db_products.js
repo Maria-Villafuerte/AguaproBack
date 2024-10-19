@@ -93,10 +93,9 @@ export async function updateProductDisp(productId, disponibilidad) {
 
 // Crear producto
 export async function createProduct(product) {
-    const { id_producto, nombre, marca, modelo, descripción, 
+    const { nombre, marca, modelo, descripción, 
       material, tipo_producto, capacidad, precio, disponibilidad
      } = product;
-  
     // Obtener el número de filas en la tabla
     const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
     const rowCount = parseInt(result.rows[0].count, 10);
@@ -109,7 +108,7 @@ export async function createProduct(product) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `;
-    const values = [id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad];
+    const values = [producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];
