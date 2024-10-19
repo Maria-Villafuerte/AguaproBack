@@ -19,7 +19,7 @@ describe('PUT /productos/:id/disp', () => {
   
       const productId = 1;
       const response = await request(app)
-        .put(`/productos/${productId}/disp`)
+        .put(`/productos/disponibilidad/${productId}`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(200);
@@ -34,7 +34,7 @@ describe('PUT /productos/:id/disp', () => {
   
       const invalidProductId = 999; // Simulando un ID inexistente
       const response = await request(app)
-        .put(`/productos/${invalidProductId}/disp`)
+        .put(`/productos/disponibilidad/${invalidProductId}`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(404);
