@@ -15,7 +15,7 @@ describe('POST /save_purchase', () => {
   it('should save a purchase successfully', async () => {
     const purchaseData = {
       clienteId: 1,
-      productos: [{ idProducto: 5, cantidad: 2, size: 5 }, { idProducto: 2, cantidad: 1, size: 2 }],
+      productos: [{ idProducto: 1, cantidad: 2}, { idProducto: 2, cantidad: 1}],
       nitEmpresa: '1234567-8',
       idDescuento: 1,
       direccion: 'Calle Falsa 123',

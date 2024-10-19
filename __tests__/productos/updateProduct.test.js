@@ -11,7 +11,7 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('PUT /product/:id', () => {
+describe('PUT /productos/:id', () => {
   it('should update a product successfully', async () => {
     const updatedProduct = {
       nombre: 'Producto B Actualizado',
@@ -27,7 +27,7 @@ describe('PUT /product/:id', () => {
 
     const productId = 1;
     const response = await request(app)
-      .put(`/product/${productId}`)
+      .put(`/productos/${productId}`)
       .send(updatedProduct);
 
     expect(response.status).toBe(200);
@@ -50,7 +50,7 @@ describe('PUT /product/:id', () => {
 
     const invalidProductId = 999; // Simulando un ID inexistente
     const response = await request(app)
-      .put(`/product/${invalidProductId}`)
+      .put(`/productos/${invalidProductId}`)
       .send(updatedProduct);
 
     expect(response.status).toBe(404);

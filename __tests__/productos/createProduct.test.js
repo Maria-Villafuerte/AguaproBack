@@ -11,7 +11,7 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('POST /product', () => {
+describe('POST /productos', () => {
   it('should create a new product successfully', async () => {
     const newProduct = {
       id_producto: 1,
@@ -27,7 +27,7 @@ describe('POST /product', () => {
     };
 
     const response = await request(app)
-      .post('/product')
+      .post('/productos')
       .send(newProduct);
 
     expect(response.status).toBe(201);
@@ -38,7 +38,7 @@ describe('POST /product', () => {
   it('should return 500 if product creation fails', async () => {
     const newProduct = {
       // Dejar algunos campos vacíos para forzar un error
-      id_producto: 1,
+      id_producto: null,
       nombre: '',
       marca: '',
       modelo: '',
@@ -51,7 +51,7 @@ describe('POST /product', () => {
     };
 
     const response = await request(app)
-      .post('/product')
+      .post('/productos')
       .send(newProduct);
 
     expect(response.status).toBe(500);

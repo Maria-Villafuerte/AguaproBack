@@ -11,7 +11,7 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('PUT /product/:id/disp', () => {
+describe('PUT /productos/:id/disp', () => {
     it('should update product availability successfully', async () => {
       const availabilityUpdate = {
         disponibilidad: true
@@ -19,7 +19,7 @@ describe('PUT /product/:id/disp', () => {
   
       const productId = 1;
       const response = await request(app)
-        .put(`/product/${productId}/disp`)
+        .put(`/productos/${productId}/disp`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(200);
@@ -34,7 +34,7 @@ describe('PUT /product/:id/disp', () => {
   
       const invalidProductId = 999; // Simulando un ID inexistente
       const response = await request(app)
-        .put(`/product/${invalidProductId}/disp`)
+        .put(`/productos/${invalidProductId}/disp`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(404);
