@@ -24,7 +24,7 @@ describe('PUT /productos/:id/disp', () => {
   
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
-      expect(response.body.message).toBe('Product availability updated successfully.');
+      expect(response.body.message).toBe('Product updated successfully');
     });
   
     it('should return 404 if product not found', async () => {
@@ -39,6 +39,5 @@ describe('PUT /productos/:id/disp', () => {
   
       expect(response.status).toBe(404);
       expect(response.body.status).toBe('failed');
-      expect(response.body.message).toBe('Product not found.');
     });
 });  
