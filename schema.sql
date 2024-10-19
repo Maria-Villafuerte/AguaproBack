@@ -4,77 +4,28 @@ CREATE TABLE Tipo_producto (
     nombre VARCHAR(30)
 );
 
+-- Tabla Capacidad
+CREATE TABLE Capacidad (
+    id_capacidad INT PRIMARY KEY,
+    cap_min DOUBLE PRECISION NOT NULL,
+    cap_max DOUBLE PRECISION NOT NULL
+);
+
 -- Tabla Productos
 CREATE TABLE Productos (
     id_producto INT PRIMARY KEY,
-    nombre VARCHAR(30),
-    descripción TEXT,
-    tipo_producto INT,
-    FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
-);
-
-ALTER TABLE Productos 
-ADD COLUMN estado VARCHAR(50) NOT NULL DEFAULT 'en venta';
-
--- Tabla Energía
-CREATE TABLE Energía (
-    energia INT PRIMARY KEY,
-    min_hp DOUBLE PRECISION,
-    max_hp DOUBLE PRECISION,
-    capacitor VARCHAR
-);
-
--- Tabla Condiciones
-CREATE TABLE Condiciones (
-    condiciones INT PRIMARY KEY,
-    Temperatura_liquida_min DOUBLE PRECISION,
-    Temperatura_liquida_max DOUBLE PRECISION,
-    Temperatura_Ambiente DOUBLE PRECISION,
-    presion DOUBLE PRECISION
-);
-
--- Tabla Size
-CREATE TABLE Size (
-    Size INT PRIMARY KEY,
-    min_gpm DOUBLE PRECISION,
-    max_gpm DOUBLE PRECISION
-);
-
-ALTER TABLE Size
-ADD COLUMN range INT;
-
--- Tabla Características
-CREATE TABLE Características (
-    marca VARCHAR(50),
-    material VARCHAR(50),
-    profundidad DOUBLE PRECISION,
-    conexion_tuberia VARCHAR(50),
-    presion_funcional DOUBLE PRECISION,
-    head INT,
-    flow_rate DOUBLE PRECISION,
-    aplicaciones TEXT,
-    producto INT,
-    energia INT,
-    condiciones INT,
-    temperatura_media DOUBLE PRECISION,
-    FOREIGN KEY (producto) REFERENCES Productos(id_producto),
-    FOREIGN KEY (energia) REFERENCES Energía(energia),
-    FOREIGN KEY (condiciones) REFERENCES Condiciones(condiciones)
-);
-
-ALTER TABLE Características 
-ADD COLUMN id_caracteristicas SERIAL NOT NULL,
-ADD CONSTRAINT pk_id_caracteristicas PRIMARY KEY (id_caracteristicas);
-
--- Tabla características variables
-CREATE TABLE caracteristicas_variables (
-    id_caracteristicas INT,
-    size INT,
+    nombre VARCHAR(30) NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    descripción VARCHAR(100) NOT NULL,
+    material VARCHAR(50) NOT NULL,
+    tipo_producto INT NOT NULL,
+    capacidad INT NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'en venta',
     precio DOUBLE PRECISION,
     disponibilidad INT,
-    FOREIGN KEY (size) REFERENCES Size(Size),
-    FOREIGN KEY (id_caracteristicas) REFERENCES Características(id_caracteristicas),
-    PRIMARY KEY (id_caracteristicas, size)
+    FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo),
+    FOREIGN KEY (capacidad) REFERENCES Capacidad(id_capacidad)
 );
 
 -- Tabla Clientes
@@ -140,6 +91,7 @@ CREATE TABLE Recuento (
     Pedido_Fk INT,
     Producto_Fk INT,
     Cantidad INT,
+    Precio_unitario DOUBLE PRECISION,
     FOREIGN KEY (Pedido_Fk) REFERENCES pedidos(id_pedido),
     FOREIGN KEY (Producto_Fk) REFERENCES productos(id_producto)
 );
