@@ -12,7 +12,7 @@ afterAll((done) => {
 });
 describe('GET /pedidos/:pedidoId', () => {
   it('should retrieve a pedido by ID', async () => {
-    const response = await request(app).get('/pedidos/2');
+    const response = await request(app).get('/pedidos/8');
 
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
