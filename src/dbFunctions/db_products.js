@@ -2,53 +2,26 @@ import conn from '../conn.js'
 
 // Obtener todos los productos
 export async function getProductos () {
-    const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, p.estado, s.range as size_range,
-      v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
-      c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
-      s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-      t.temperatura_ambiente, t.presion, c.id_caracteristicas
+    const result = await conn.query(`SELECT *
       FROM Productos p
-      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-      JOIN características c ON p.id_producto = c.producto
-      JOIN energía e ON c.energia = e.energia
-      JOIN condiciones t ON c.condiciones = t.condiciones
-      JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
-      JOIN size s ON v.size = s.size`)
+      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo`)
     return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
 // Obtener todos los productos EN VENTA
 export async function getVisibleProducts() {
-  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
-    v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
-    c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
-    s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-    t.temperatura_ambiente, t.presion, c.id_caracteristicas
+  const result = await conn.query(`SELECT *
     FROM Productos p
     JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-    JOIN características c ON p.id_producto = c.producto
-    JOIN energía e ON c.energia = e.energia
-    JOIN condiciones t ON c.condiciones = t.condiciones
-    JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
-    JOIN size s ON v.size = s.size
     WHERE estado = 'en venta'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
 // Obtener todos los productos OCULTO
 export async function getOcultoProducts() {
-  const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
-    v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
-    c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
-    s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-    t.temperatura_ambiente, t.presion, c.id_caracteristicas
+  const result = await conn.query(`SELECT *
     FROM Productos p
     JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-    JOIN características c ON p.id_producto = c.producto
-    JOIN energía e ON c.energia = e.energia
-    JOIN condiciones t ON c.condiciones = t.condiciones
-    JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
-    JOIN size s ON v.size = s.size
     WHERE estado = 'oculto'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
@@ -57,18 +30,9 @@ export async function getOcultoProducts() {
 // Obtener productos por ID
 export async function getProductById(productId) {
     try {
-      const result = await conn.query(`SELECT p.id_producto, p.nombre, p.descripción, s.range as size_range,
-      v.precio, v.disponibilidad, u.nombre as tipo_producto, c.marca, c.material, c.profundidad, c.conexion_tuberia, 
-      c.presion_funcional, c.head, c.flow_rate, c.aplicaciones, c.temperatura_media, s.min_gpm, 
-      s.max_gpm, e.min_hp, e.max_hp, e.capacitor, t.temperatura_liquida_min, t.temperatura_liquida_max, 
-      t.temperatura_ambiente, t.presion, c.id_caracteristicas
+      const result = await conn.query(`SELECT *
       FROM Productos p
       JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-      JOIN características c ON p.id_producto = c.producto
-      JOIN energía e ON c.energia = e.energia
-      JOIN condiciones t ON c.condiciones = t.condiciones
-      JOIN caracteristicas_variables v ON v.id_caracteristicas = c.id_caracteristicas
-      JOIN size s ON v.size = s.size
       WHERE id_producto = $1`, [productId]);
       if (result.rows.length === 1) {
         return result.rows[0]; // Devuelve el primer producto encontrado
@@ -91,12 +55,20 @@ export async function deleteProduct(productId) {
 }
 
 // Editar producto
-export async function updateProduct(productId, nombre, descripción, tipo_producto) {
+export async function updateProduct(id_producto, nombre, marca, modelo, descripción, 
+    material, tipo_producto, capacidad, precio, disponibilidad) {
     try {
-        const result = await conn.query(
-        'UPDATE Productos SET nombre = $1, descripción = $2, tipo_producto = $3 WHERE id_producto = $4',
-        [nombre, descripción, tipo_producto, productId]
-        );
+      const query = `
+      UPDATE Productos 
+      SET 
+        nombre = $1, marca = $2, modelo = $3, descripción = $4, material = $5, tipo_producto = $6, 
+        capacidad = $7, precio = $8, disponibilidad = $9 WHERE id_producto = $10
+    `;
+    
+    const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad, id_producto];
+    
+        // Luego puedes ejecutar el query con conn.query
+        await conn.query(query, values);    
         return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -105,12 +77,12 @@ export async function updateProduct(productId, nombre, descripción, tipo_produc
 }
 
 // Editar disponibilidad producto
-export async function updateProductDisp(productId, size, disponibilidad) {
+export async function updateProductDisp(productId, disponibilidad) {
   try {
       const result = await conn.query(
-      `UPDATE caracteristicas_variables SET disponibilidad = $3 
-      WHERE size = $2 AND id_caracteristicas = (SELECT id_caracteristicas FROM características WHERE producto = $1)`,
-      [productId, size, disponibilidad]
+      `UPDATE Productos SET disponibilidad = $2 
+      WHERE id_producto = $1`,
+      [productId, disponibilidad]
       );
       return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
   } catch (error) {
@@ -121,7 +93,9 @@ export async function updateProductDisp(productId, size, disponibilidad) {
 
 // Crear producto
 export async function createProduct(product) {
-    const { nombre, descripción, tipo_producto } = product;
+    const { id_producto, nombre, marca, modelo, descripción, 
+      material, tipo_producto, capacidad, precio, disponibilidad
+     } = product;
   
     // Obtener el número de filas en la tabla
     const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
@@ -131,11 +105,11 @@ export async function createProduct(product) {
     const producto = rowCount + 1;
   
     const query = `
-      INSERT INTO Productos (id_producto, nombre, descripción, tipo_producto)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO Productos (id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `;
-    const values = [producto, nombre, descripción, tipo_producto];
+    const values = [id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];
