@@ -16,21 +16,22 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
     const pedidoId = pedidoResult.rows[0].id_pedido;
 
     for (let producto of productos) {
+      const precioProducto = await conn.query(
+        'SELECT precio FROM Productos WHERE id_producto = $1',
+        [producto.idProducto]
+      );
       await conn.query(
-        'INSERT INTO Recuento (Pedido_Fk, Producto_Fk, Cantidad) VALUES ($1, $2, $3)',
-        [pedidoId, producto.idProducto, producto.cantidad]
+        'INSERT INTO Recuento (Pedido_Fk, Producto_Fk, Cantidad, Precio_unitario) VALUES ($1, $2, $3, $4)',
+        [pedidoId, producto.idProducto, producto.cantidad, precioProducto]
       );
     }
 
     let montoTotal = 0;
     for (let producto of productos) {
       const productoData = await conn.query(
-        `SELECT cv.precio 
-         FROM Productos p
-         JOIN Características c ON p.id_producto = c.producto
-         JOIN caracteristicas_variables cv ON c.id_caracteristicas = cv.id_caracteristicas
-         WHERE p.id_producto = $1 AND cv.size = $2`,
-        [producto.idProducto, producto.size]
+        `SELECT precio FROM Recuento
+         WHERE Producto_Fk = $1`,
+        [producto.idProducto]
       );
       montoTotal += productoData.rows[0].precio * producto.cantidad;
     }
@@ -183,7 +184,7 @@ export async function getProductosByPedido(pedidoId) {
         c.aplicaciones,
         c.temperatura_media,
         cv.size,
-        cv.precio,
+        r.precio,
         cv.disponibilidad,
         r.cantidad
       FROM Recuento r
