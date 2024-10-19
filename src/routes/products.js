@@ -94,11 +94,11 @@ router.put('/productos/:productId', async (req, res) => {
     try {
         const updated = await updateProduct(productId, nombre, descripción, tipo_producto);
         if (!updated) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res.status(404).json({status: 'failed',  error: 'Product not found' });
         }
-        res.status(200).json({ message: 'Product updated successfully' });
+        res.status(200).json({status: 'success', message: 'Product updated successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({status: 'failed',  error: 'Internal Server Error' });
     }
 });
 
@@ -109,11 +109,11 @@ router.put('/productos/disponibilidad/:productId', async (req, res) => {
     try {
         const updated = await updateProductDisp(productId, size, disponibilidad);
         if (!updated) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res.status(404).json({status: 'failed',  error: 'Product not found' });
         }
-        res.status(200).json({ message: 'Product updated successfully' });
+        res.status(200).json({status: 'success', message: 'Product updated successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({status: 'failed',  error: 'Internal Server Error' });
     }
 });
 

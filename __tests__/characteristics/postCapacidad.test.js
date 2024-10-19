@@ -11,16 +11,11 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('POST /condiciones', () => {
-    it('Debería añadir condiciones exitosamente', async () => {
-      const newCondition = {
-        Temperatura_liquida_min: 5,
-        Temperatura_liquida_max: 50,
-        Temperatura_Ambiente: 25,
-        presion: 1.2
-      };
+describe('POST /capacidad', () => {
+    it('Debería añadir una variación de capacidad exitosamente', async () => {
+      const newTipo = { cap_min: 20.0, cap_max: 25.5 };
       
-      const response = await request(app).post('/condiciones').send(newCondition);
+      const response = await request(app).post('/capacidad').send(newTipo);
       
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
@@ -28,9 +23,9 @@ describe('POST /condiciones', () => {
     });
   
     it('Debería devolver un error 500 en caso de fallo', async () => {
-      const newCondition = {}; // Datos incompletos para simular error
+      const newTipo = {}; // Datos incompletos para simular error
   
-      const response = await request(app).post('/condiciones').send(newCondition);
+      const response = await request(app).post('/capacidad').send(newTipo);
       
       expect(response.status).toBe(500);
       expect(response.body.error).toBe('Error en el servidor');

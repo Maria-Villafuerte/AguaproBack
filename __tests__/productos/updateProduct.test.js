@@ -11,26 +11,50 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe('PUT /productos/:productId', () => {
-  it('should update an existing product and return 200', async () => {
+describe('PUT /productos/:id', () => {
+  it('should update a product successfully', async () => {
     const updatedProduct = {
-      nombre: 'Producto Actualizado',
-      descripción: 'Nueva descripción',
-      tipo_producto: 2
+      nombre: 'Producto B Actualizado',
+      marca: 'Marca B',
+      modelo: 'Modelo B',
+      descripción: 'Descripción del producto B actualizada',
+      material: 'Metal',
+      tipo_producto: 5,
+      capacidad: 1,
+      precio: 250.00,
+      disponibilidad: 150
     };
-    const response = await request(app).put('/productos/1').send(updatedProduct);
+
+    const productId = 1;
+    const response = await request(app)
+      .put(`/productos/${productId}`)
+      .send(updatedProduct);
+
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('Product updated successfully');
+    expect(response.body.status).toBe('success');
+    expect(response.body.message).toBe('Product updated successfully.');
   });
 
-  it('should return 404 if product is not found', async () => {
+  it('should return 404 if product not found', async () => {
     const updatedProduct = {
-      nombre: 'Producto Actualizado',
-      descripción: 'Nueva descripción',
-      tipo_producto: 2
+      nombre: 'Producto No Existente',
+      marca: 'Marca C',
+      modelo: 'Modelo C',
+      descripción: 'Descripción de un producto que no existe',
+      material: 'Vidrio',
+      tipo_producto: 5,
+      capacidad: 1,
+      precio: 250.00,
+      disponibilidad: 150
     };
-    const response = await request(app).put('/productos/999').send(updatedProduct);
+
+    const invalidProductId = 999; // Simulando un ID inexistente
+    const response = await request(app)
+      .put(`/productos/${invalidProductId}`)
+      .send(updatedProduct);
+
     expect(response.status).toBe(404);
-    expect(response.body.error).toBe('Product not found');
+    expect(response.body.status).toBe('failed');
+    expect(response.body.message).toBe('Product not found.');
   });
 });
