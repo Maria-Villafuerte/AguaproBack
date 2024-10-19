@@ -152,7 +152,7 @@ export async function getPedidosByEstado(estadoId) {
         f.monto_total, 
         f.nit_empresa, 
         f.id_descuento,
-        f.created_date,
+        f.created_date
       FROM Pedidos p
       JOIN Tipos_estados te ON p.estatus = te.id_estado
       JOIN Factura f ON p.id_pedido = f.id_pedido

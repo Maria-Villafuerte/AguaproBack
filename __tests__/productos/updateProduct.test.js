@@ -19,10 +19,10 @@ describe('PUT /productos/:id', () => {
       modelo: 'Modelo B',
       descripción: 'Descripción del producto B actualizada',
       material: 'Metal',
-      tipo_producto: 'Mecánico',
-      capacidad: 200,
+      tipo_producto: 5,
+      capacidad: 1,
       precio: 250.00,
-      disponibilidad: false
+      disponibilidad: 150
     };
 
     const productId = 1;
@@ -42,10 +42,10 @@ describe('PUT /productos/:id', () => {
       modelo: 'Modelo C',
       descripción: 'Descripción de un producto que no existe',
       material: 'Vidrio',
-      tipo_producto: 'Decorativo',
-      capacidad: 300,
-      precio: 350.00,
-      disponibilidad: true
+      tipo_producto: 5,
+      capacidad: 1,
+      precio: 250.00,
+      disponibilidad: 150
     };
 
     const invalidProductId = 999; // Simulando un ID inexistente

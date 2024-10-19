@@ -14,7 +14,7 @@ afterAll((done) => {
 describe('PUT /productos/:id/disp', () => {
     it('should update product availability successfully', async () => {
       const availabilityUpdate = {
-        disponibilidad: true
+        disponibilidad: 180
       };
   
       const productId = 1;
@@ -29,7 +29,7 @@ describe('PUT /productos/:id/disp', () => {
   
     it('should return 404 if product not found', async () => {
       const availabilityUpdate = {
-        disponibilidad: false
+        disponibilidad: 0
       };
   
       const invalidProductId = 999; // Simulando un ID inexistente

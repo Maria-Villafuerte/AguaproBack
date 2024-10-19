@@ -14,16 +14,15 @@ afterAll((done) => {
 describe('POST /productos', () => {
   it('should create a new product successfully', async () => {
     const newProduct = {
-      id_producto: 1,
       nombre: 'Producto A',
       marca: 'Marca A',
       modelo: 'Modelo A',
       descripción: 'Descripción del producto A',
       material: 'Plástico',
-      tipo_producto: 'Electrónico',
-      capacidad: 100,
-      precio: 150.00,
-      disponibilidad: true
+      tipo_producto: 6,
+      capacidad: 1,
+      precio: 250.00,
+      disponibilidad: 450
     };
 
     const response = await request(app)
@@ -31,7 +30,6 @@ describe('POST /productos', () => {
       .send(newProduct);
 
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('id_producto', 1);
     expect(response.body).toHaveProperty('nombre', 'Producto A');
   });
 
@@ -44,10 +42,10 @@ describe('POST /productos', () => {
       modelo: '',
       descripción: '',
       material: '',
-      tipo_producto: '',
-      capacidad: 0,
-      precio: 0,
-      disponibilidad: true
+      tipo_producto: 1,
+      capacidad: 1,
+      precio: 0.0,
+      disponibilidad: 0
     };
 
     const response = await request(app)

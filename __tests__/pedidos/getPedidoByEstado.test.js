@@ -13,7 +13,7 @@ afterAll((done) => {
 
 describe('GET /pedidos/estado/:estadoId', () => {
   it('should retrieve pedidos by estado', async () => {
-    const response = await request(app).get('/pedidos/estado/3');
+    const response = await request(app).get('/pedidos/estado/4');
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
     expect(response.body.data).toBeDefined();
