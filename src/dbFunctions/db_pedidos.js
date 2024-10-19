@@ -151,12 +151,14 @@ export async function getPedidosByEstado(estadoId) {
         c.nombre AS cliente, 
         f.monto_total, 
         f.nit_empresa, 
-        f.id_descuento
+        f.id_descuento,
+        f.created_date,
       FROM Pedidos p
       JOIN Tipos_estados te ON p.estatus = te.id_estado
       JOIN Factura f ON p.id_pedido = f.id_pedido
       JOIN Clientes c ON f.id_cliente = c.id_cliente
       WHERE p.estatus = $1
+      ORDER BY f.created_date
     `;
     const result = await conn.query(query, [estadoId]);
     return result.rows;
@@ -169,29 +171,10 @@ export async function getPedidosByEstado(estadoId) {
 export async function getProductosByPedido(pedidoId) {
   try {
     const query = `
-      SELECT 
-        pr.id_producto, 
-        pr.nombre, 
-        pr.descripción,
-        tp.nombre AS tipo_producto,
-        c.marca,
-        c.material,
-        c.profundidad,
-        c.conexion_tuberia,
-        c.presion_funcional,
-        c.head,
-        c.flow_rate,
-        c.aplicaciones,
-        c.temperatura_media,
-        cv.size,
-        r.precio,
-        cv.disponibilidad,
-        r.cantidad
+      SELECT *
       FROM Recuento r
       JOIN Productos pr ON r.Producto_Fk = pr.id_producto
       JOIN Tipo_producto tp ON pr.tipo_producto = tp.id_tipo
-      JOIN Características c ON pr.id_producto = c.producto
-      JOIN caracteristicas_variables cv ON c.id_caracteristicas = cv.id_caracteristicas
       WHERE r.Pedido_Fk = $1
     `;
     const result = await conn.query(query, [pedidoId]);
@@ -283,10 +266,9 @@ export async function updateProductosByPedido(pedidoId, productos) {
       const productoData = await conn.query(
         `SELECT cv.precio 
          FROM Productos p
-         JOIN Características c ON p.id_producto = c.producto
-         JOIN caracteristicas_variables cv ON c.id_caracteristicas = cv.id_caracteristicas
-         WHERE p.id_producto = $1 AND cv.size = $2`,
-        [producto.idProducto, producto.size]
+         JOIN Recuento r ON p.id_producto = r.producto_fk
+         WHERE p.id_producto = $1 AND r.pedido_fk = $2`,
+        [producto.idProducto, pedidoId]
       );
       montoTotal += productoData.rows[0].precio * producto.cantidad;
     }
