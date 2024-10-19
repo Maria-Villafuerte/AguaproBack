@@ -55,12 +55,20 @@ export async function deleteProduct(productId) {
 }
 
 // Editar producto
-export async function updateProduct(productId, nombre, descripción, tipo_producto) {
+export async function updateProduct(id_producto, nombre, marca, modelo, descripción, 
+    material, tipo_producto, capacidad, precio, disponibilidad) {
     try {
-        const result = await conn.query(
-        'UPDATE Productos SET nombre = $1, descripción = $2, tipo_producto = $3 WHERE id_producto = $4',
-        [nombre, descripción, tipo_producto, productId]
-        );
+      const query = `
+      UPDATE Productos 
+      SET 
+        nombre = $1, marca = $2, modelo = $3, descripción = $4, material = $5, tipo_producto = $6, 
+        capacidad = $7, precio = $8, disponibilidad = $9 WHERE id_producto = $10
+    `;
+    
+    const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad, id_producto];
+    
+        // Luego puedes ejecutar el query con conn.query
+        await conn.query(query, values);    
         return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
@@ -69,12 +77,12 @@ export async function updateProduct(productId, nombre, descripción, tipo_produc
 }
 
 // Editar disponibilidad producto
-export async function updateProductDisp(productId, size, disponibilidad) {
+export async function updateProductDisp(productId, disponibilidad) {
   try {
       const result = await conn.query(
-      `UPDATE caracteristicas_variables SET disponibilidad = $3 
-      WHERE size = $2 AND id_caracteristicas = (SELECT id_caracteristicas FROM características WHERE producto = $1)`,
-      [productId, size, disponibilidad]
+      `UPDATE Productos SET disponibilidad = $2 
+      WHERE id_producto = $1`,
+      [productId, disponibilidad]
       );
       return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
   } catch (error) {
@@ -85,7 +93,9 @@ export async function updateProductDisp(productId, size, disponibilidad) {
 
 // Crear producto
 export async function createProduct(product) {
-    const { nombre, descripción, tipo_producto } = product;
+    const { id_producto, nombre, marca, modelo, descripción, 
+      material, tipo_producto, capacidad, precio, disponibilidad
+     } = product;
   
     // Obtener el número de filas en la tabla
     const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
@@ -95,11 +105,11 @@ export async function createProduct(product) {
     const producto = rowCount + 1;
   
     const query = `
-      INSERT INTO Productos (id_producto, nombre, descripción, tipo_producto)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO Productos (id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `;
-    const values = [producto, nombre, descripción, tipo_producto];
+    const values = [id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];
