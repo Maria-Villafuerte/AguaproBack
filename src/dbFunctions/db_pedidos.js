@@ -29,7 +29,7 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
     let montoTotal = 0;
     for (let producto of productos) {
       const productoData = await conn.query(
-        `SELECT precio FROM Recuento
+        `SELECT Precio_unitario FROM Recuento
          WHERE Producto_Fk = $1`,
         [producto.idProducto]
       );
