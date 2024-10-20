@@ -43,7 +43,7 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
       // Aplicar descuento si existe
       if (idDescuento) {
         const descuentoData = await conn.query(
-          'SELECT descuento FROM Codigos WHERE id_codigo = $1 AND validez = TRUE AND producto = $3',
+          'SELECT descuento FROM Codigos WHERE id_codigo = $1 AND validez = TRUE AND producto = $2',
           [idDescuento, producto.idProducto]
         );
 
