@@ -1,7 +1,8 @@
 import express from 'express';
 
 // PRODUCTOS db_products
-import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, deleteProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
+import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, 
+    deleteProduct, unhideProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
 
 const router = express.Router();
 
@@ -66,6 +67,16 @@ router.put('/productos/hide/:productId', async (req, res) => {
     const productId = parseInt(req.params.productId, 10);
     try {
         await deleteProduct(productId);
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.put('/productos/unhide/:productId', async (req, res) => {
+    const productId = parseInt(req.params.productId, 10);
+    try {
+        await unhideProduct(productId);
         res.sendStatus(204);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
