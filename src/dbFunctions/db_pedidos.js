@@ -4,49 +4,63 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
   try {
     await conn.query('BEGIN');
 
+    // Validar entradas
+    if (!clienteId || !productos || !Array.isArray(productos) || !nitEmpresa) {
+      throw new Error('Datos de entrada inválidos');
+    }
+
     const maxIdResult = await conn.query('SELECT MAX(id_pedido) FROM Pedidos');
     const maxId = maxIdResult.rows[0].max || 0;
     const newPedidoId = maxId + 1;
 
-    // Include direccion in the Pedidos insert
+    // Insertar en Pedidos
     const pedidoResult = await conn.query(
       'INSERT INTO Pedidos (id_pedido, estatus, direccion) VALUES ($1, $2, $3) RETURNING id_pedido',
       [newPedidoId, 1, direccion]
     );
     const pedidoId = pedidoResult.rows[0].id_pedido;
 
+    let montoTotal = 0;
+
+    // Insertar productos en Recuento y calcular montoTotal en el mismo paso
     for (let producto of productos) {
       const precioProducto = await conn.query(
         'SELECT precio FROM Productos WHERE id_producto = $1',
         [producto.idProducto]
       );
+
+      if (precioProducto.rowCount === 0) {
+        throw new Error(`Producto con id ${producto.idProducto} no encontrado`);
+      }
+
+      const precioUnitario = precioProducto.rows[0].precio;
+
       await conn.query(
         'INSERT INTO Recuento (Pedido_Fk, Producto_Fk, Cantidad, Precio_unitario) VALUES ($1, $2, $3, $4)',
-        [pedidoId, producto.idProducto, producto.cantidad, precioProducto.rows[0].precio]
+        [pedidoId, producto.idProducto, producto.cantidad, precioUnitario]
       );
-    }
 
-    let montoTotal = 0;
-    for (let producto of productos) {
-      const productoData = await conn.query(
-        `SELECT Precio_unitario FROM Recuento
-         WHERE Producto_Fk = $1 AND Pedido_FK = $2`,
-        [producto.idProducto, pedidoId]
-      );
-      montoTotal += productoData.rows[0].Precio_unitario * producto.cantidad;
-    }
+      // Aplicar descuento si existe
+      if (idDescuento) {
+        const descuentoData = await conn.query(
+          'SELECT descuento FROM Codigos WHERE id_codigo = $1 AND validez = TRUE AND producto = $3',
+          [idDescuento, producto.idProducto]
+        );
 
-    if (idDescuento) {
-      const descuentoData = await conn.query(
-        'SELECT descuento FROM Codigos WHERE id_codigo = $1 AND validez = TRUE',
-        [idDescuento]
-      );
-      if (descuentoData.rowCount > 0) {
-        const descuento = descuentoData.rows[0].descuento;
-        montoTotal *= 1 - descuento / 100;
+        if (descuentoData.rowCount > 0) {
+          const descuento = descuentoData.rows[0].descuento;
+          if (descuento < 0 || descuento > 100) {
+            throw new Error('Descuento inválido');
+          }
+          precioUnitario *= 1 - descuento / 100; // Aplicar descuento
+        }
       }
+
+      // Calcular el monto total mientras se insertan los productos
+      montoTotal += precioUnitario * producto.cantidad;
     }
 
+    // Insertar en Factura
     await conn.query(
       'INSERT INTO Factura (id_cliente, id_pedido, nit_empresa, monto_total, id_descuento) VALUES ($1, $2, $3, $4, $5)',
       [clienteId, pedidoId, nitEmpresa, montoTotal, idDescuento]
