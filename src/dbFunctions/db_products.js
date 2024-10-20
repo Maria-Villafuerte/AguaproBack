@@ -62,14 +62,12 @@ export async function updateProduct(id_producto, nombre, marca, modelo, descripc
       UPDATE Productos 
       SET 
         nombre = $1, marca = $2, modelo = $3, descripción = $4, material = $5, tipo_producto = $6, 
-        capacidad = $7, precio = $8, disponibilidad = $9 WHERE id_producto = $10
-    `;
+        capacidad = $7, precio = $8, disponibilidad = $9 WHERE id_producto = $10`;
     
-    const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad, id_producto];
+      const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad, id_producto];
     
-        // Luego puedes ejecutar el query con conn.query
-        await conn.query(query, values);    
-        return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
+      const result = await conn.query(query, values);    
+      return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
     } catch (error) {
         console.error('Error en la consulta SQL:', error);
         throw error;

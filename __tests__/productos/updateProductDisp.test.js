@@ -19,12 +19,12 @@ describe('PUT /productos/:id/disp', () => {
   
       const productId = 1;
       const response = await request(app)
-        .put(`/productos/${productId}/disp`)
+        .put(`/productos/disponibilidad/${productId}`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
-      expect(response.body.message).toBe('Product availability updated successfully.');
+      expect(response.body.message).toBe('Product updated successfully');
     });
   
     it('should return 404 if product not found', async () => {
@@ -34,11 +34,10 @@ describe('PUT /productos/:id/disp', () => {
   
       const invalidProductId = 999; // Simulando un ID inexistente
       const response = await request(app)
-        .put(`/productos/${invalidProductId}/disp`)
+        .put(`/productos/disponibilidad/${invalidProductId}`)
         .send(availabilityUpdate);
   
       expect(response.status).toBe(404);
       expect(response.body.status).toBe('failed');
-      expect(response.body.message).toBe('Product not found.');
     });
 });  

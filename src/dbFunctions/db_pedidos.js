@@ -22,7 +22,7 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
       );
       await conn.query(
         'INSERT INTO Recuento (Pedido_Fk, Producto_Fk, Cantidad, Precio_unitario) VALUES ($1, $2, $3, $4)',
-        [pedidoId, producto.idProducto, producto.cantidad, precioProducto]
+        [pedidoId, producto.idProducto, producto.cantidad, precioProducto.rows[0].precio]
       );
     }
 
@@ -30,10 +30,10 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
     for (let producto of productos) {
       const productoData = await conn.query(
         `SELECT Precio_unitario FROM Recuento
-         WHERE Producto_Fk = $1`,
-        [producto.idProducto]
+         WHERE Producto_Fk = $1 AND Pedido_FK = $2`,
+        [producto.idProducto, pedidoId]
       );
-      montoTotal += productoData.rows[0].precio * producto.cantidad;
+      montoTotal += productoData.rows[0].Precio_unitario * producto.cantidad;
     }
 
     if (idDescuento) {
