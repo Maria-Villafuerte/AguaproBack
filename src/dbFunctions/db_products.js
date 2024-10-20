@@ -2,27 +2,45 @@ import conn from '../conn.js'
 
 // Obtener todos los productos
 export async function getProductos () {
-    const result = await conn.query(`SELECT *
+    const result = await conn.query(`SELECT 
+      p.id_producto, p.nombre, p.descripción,
+      u.nombre AS tipoProducto,
+      p.marca, p.modelo, p.material,
+      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.precio, p.disponibilidad, p.estado
       FROM Productos p
-      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo`)
+      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
+      JOIN capacidad c ON p.capacidad = c.id_capacidad`)
     return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
 // Obtener todos los productos EN VENTA
 export async function getVisibleProducts() {
-  const result = await conn.query(`SELECT *
-    FROM Productos p
-    JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-    WHERE estado = 'en venta'`)
+  const result = await conn.query(`SELECT 
+      p.id_producto, p.nombre, p.descripción,
+      u.nombre AS tipoProducto,
+      p.marca, p.modelo, p.material,
+      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.precio, p.disponibilidad, p.estado
+      FROM Productos p
+      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
+      JOIN capacidad c ON p.capacidad = c.id_capacidad
+      WHERE p.estado = 'en venta'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
 // Obtener todos los productos OCULTO
 export async function getOcultoProducts() {
-  const result = await conn.query(`SELECT *
-    FROM Productos p
-    JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-    WHERE estado = 'oculto'`)
+  const result = await conn.query(`SELECT 
+      p.id_producto, p.nombre, p.descripción,
+      u.nombre AS tipoProducto,
+      p.marca, p.modelo, p.material,
+      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.precio, p.disponibilidad, p.estado
+      FROM Productos p
+      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
+      JOIN capacidad c ON p.capacidad = c.id_capacidad
+    WHERE p.estado = 'oculto'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 

@@ -53,7 +53,7 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
     );
 
     await conn.query('COMMIT');
-    return { success: true, pedidoId: pedidoId };
+    return { success: true, pedidoId: pedidoId, monto: montoTotal };
   } catch (error) {
     await conn.query('ROLLBACK');
     console.error('Error en la transacción:', error);
