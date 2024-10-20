@@ -20,7 +20,8 @@ describe('PUT /productos/:id', () => {
       descripción: 'Descripción del producto B actualizada',
       material: 'Metal',
       tipo_producto: 5,
-      capacidad: 1,
+      capacidad_min: 10.0, 
+      capacidad_max: 15.0,
       precio: 250.00,
       disponibilidad: 150
     };
@@ -43,7 +44,8 @@ describe('PUT /productos/:id', () => {
       descripción: 'Descripción de un producto que no existe',
       material: 'Vidrio',
       tipo_producto: 5,
-      capacidad: 1,
+      capacidad_min: 10.0, 
+      capacidad_max: 15.0,
       precio: 250.00,
       disponibilidad: 150
     };
