@@ -69,6 +69,15 @@ export async function deleteProduct(productId) {
     }
 }
 
+export async function unhideProduct(productId) {
+  try {
+      await conn.query("UPDATE Productos SET estado = 'en venta' WHERE id_producto = $1", [productId]);
+  } catch (error) {
+      console.error('Error en la consulta SQL:', error);
+      throw error;
+  }
+}
+
 // Editar producto
 export async function updateProduct(id_producto, nombre, marca, modelo, descripción, 
     material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad) {

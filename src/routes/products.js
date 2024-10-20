@@ -1,7 +1,8 @@
 import express from 'express';
 
 // PRODUCTOS db_products
-import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, deleteProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
+import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, 
+    deleteProduct, unhideProduct, updateProduct, updateProductDisp, createProduct } from '../dbFunctions/db_products.js';
 
 const router = express.Router();
 
@@ -72,6 +73,16 @@ router.put('/productos/hide/:productId', async (req, res) => {
     }
 });
 
+router.put('/productos/unhide/:productId', async (req, res) => {
+    const productId = parseInt(req.params.productId, 10);
+    try {
+        await unhideProduct(productId);
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // Crear un nuevo producto
 router.post('/productos', async (req, res) => {
     const newProduct = req.body;
@@ -90,11 +101,11 @@ router.post('/productos', async (req, res) => {
 // Actualizar un producto
 router.put('/productos/:productId', async (req, res) => {
     const id_producto = parseInt(req.params.productId, 10);
-    const {nombre, marca, modelo, descripción, 
-        material, tipo_producto, capacidad, precio, disponibilidad} = req.body;
+    const {nombre, marca, modelo, descripción, material, tipo_producto, 
+        capacidad_min, capacidad_max, precio, disponibilidad} = req.body;
     try {
         const updated = await updateProduct(id_producto, nombre, marca, modelo, descripción, 
-            material, tipo_producto, capacidad, precio, disponibilidad);
+            material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad);
         if (!updated) {
             return res.status(404).json({status: 'failed',  error: 'Product not found' });
         }
