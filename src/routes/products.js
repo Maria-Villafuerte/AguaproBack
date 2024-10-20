@@ -90,11 +90,11 @@ router.post('/productos', async (req, res) => {
 // Actualizar un producto
 router.put('/productos/:productId', async (req, res) => {
     const id_producto = parseInt(req.params.productId, 10);
-    const {nombre, marca, modelo, descripción, 
-        material, tipo_producto, capacidad, precio, disponibilidad} = req.body;
+    const {nombre, marca, modelo, descripción, material, tipo_producto, 
+        capacidad_min, capacidad_max, precio, disponibilidad} = req.body;
     try {
         const updated = await updateProduct(id_producto, nombre, marca, modelo, descripción, 
-            material, tipo_producto, capacidad, precio, disponibilidad);
+            material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad);
         if (!updated) {
             return res.status(404).json({status: 'failed',  error: 'Product not found' });
         }
