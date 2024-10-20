@@ -28,6 +28,7 @@ describe('POST /save_purchase', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('Compra guardada exitosamente.');
     expect(response.body.pedidoId).toBeDefined(); // Verifica que se devuelva el ID del pedido
+    expect(response.body.monto).toBeDefined(); // Verifica que se devuelva el ID del pedido
   });
 
   it('should return a 400 if purchase data is invalid', async () => {
