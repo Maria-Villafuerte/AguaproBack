@@ -4,13 +4,6 @@ CREATE TABLE Tipo_producto (
     nombre VARCHAR(30)
 );
 
--- Tabla Capacidad
-CREATE TABLE Capacidad (
-    id_capacidad INT PRIMARY KEY,
-    cap_min DOUBLE PRECISION NOT NULL,
-    cap_max DOUBLE PRECISION NOT NULL
-);
-
 -- Tabla Productos
 CREATE TABLE Productos (
     id_producto INT PRIMARY KEY,
@@ -20,12 +13,12 @@ CREATE TABLE Productos (
     descripción VARCHAR(100) NOT NULL,
     material VARCHAR(50) NOT NULL,
     tipo_producto INT NOT NULL,
-    capacidad INT NOT NULL,
     estado VARCHAR(50) NOT NULL DEFAULT 'en venta',
     precio DOUBLE PRECISION,
     disponibilidad INT,
-    FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo),
-    FOREIGN KEY (capacidad) REFERENCES Capacidad(id_capacidad)
+    cap_min DOUBLE PRECISION,
+    cap_max DOUBLE PRECISION,
+    FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
 );
 
 -- Tabla Clientes
