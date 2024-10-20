@@ -33,7 +33,7 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
         throw new Error(`Producto con id ${producto.idProducto} no encontrado`);
       }
 
-      const precioUnitario = precioProducto.rows[0].precio;
+      let precioUnitario = precioProducto.rows[0].precio;
 
       await conn.query(
         'INSERT INTO Recuento (Pedido_Fk, Producto_Fk, Cantidad, Precio_unitario) VALUES ($1, $2, $3, $4)',

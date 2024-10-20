@@ -20,7 +20,8 @@ describe('POST /productos', () => {
       descripción: 'Descripción del producto A',
       material: 'Plástico',
       tipo_producto: 6,
-      capacidad: 1,
+      capacidad_min: 20.0, 
+      capacidad_max: 35.0,
       precio: 250.00,
       disponibilidad: 450
     };

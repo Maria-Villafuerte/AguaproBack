@@ -6,11 +6,10 @@ export async function getProductos () {
       p.id_producto, p.nombre, p.descripción,
       u.nombre AS tipoProducto,
       p.marca, p.modelo, p.material,
-      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.cap_min AS capacidadMin, p.cap_max AS capacidadMax,
       p.precio, p.disponibilidad, p.estado
       FROM Productos p
-      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-      JOIN capacidad c ON p.capacidad = c.id_capacidad`)
+      JOIN tipo_producto u ON p.tipo_producto = u.id_tipo`)
     return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
 
@@ -20,11 +19,10 @@ export async function getVisibleProducts() {
       p.id_producto, p.nombre, p.descripción,
       u.nombre AS tipoProducto,
       p.marca, p.modelo, p.material,
-      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.cap_min AS capacidadMin, p.cap_max AS capacidadMax,
       p.precio, p.disponibilidad, p.estado
       FROM Productos p
       JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-      JOIN capacidad c ON p.capacidad = c.id_capacidad
       WHERE p.estado = 'en venta'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
@@ -35,11 +33,10 @@ export async function getOcultoProducts() {
       p.id_producto, p.nombre, p.descripción,
       u.nombre AS tipoProducto,
       p.marca, p.modelo, p.material,
-      c.cap_min AS capacidadMin, c.cap_max AS capacidadMax,
+      p.cap_min AS capacidadMin, p.cap_max AS capacidadMax,
       p.precio, p.disponibilidad, p.estado
       FROM Productos p
       JOIN tipo_producto u ON p.tipo_producto = u.id_tipo
-      JOIN capacidad c ON p.capacidad = c.id_capacidad
     WHERE p.estado = 'oculto'`)
   return result.rows.length > 0 ? result.rows : 'No posts found.'
 }
@@ -72,17 +69,26 @@ export async function deleteProduct(productId) {
     }
 }
 
+export async function unhideProduct(productId) {
+  try {
+      await conn.query("UPDATE Productos SET estado = 'en venta' WHERE id_producto = $1", [productId]);
+  } catch (error) {
+      console.error('Error en la consulta SQL:', error);
+      throw error;
+  }
+}
+
 // Editar producto
 export async function updateProduct(id_producto, nombre, marca, modelo, descripción, 
-    material, tipo_producto, capacidad, precio, disponibilidad) {
+    material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad) {
     try {
       const query = `
       UPDATE Productos 
       SET 
         nombre = $1, marca = $2, modelo = $3, descripción = $4, material = $5, tipo_producto = $6, 
-        capacidad = $7, precio = $8, disponibilidad = $9 WHERE id_producto = $10`;
+        cap_min = $7, cap_max = $8, precio = $9, disponibilidad = $10 WHERE id_producto = $11`;
     
-      const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad, id_producto];
+      const values = [ nombre, marca, modelo, descripción, material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad, id_producto];
     
       const result = await conn.query(query, values);    
       return result.rowCount > 0; // Devuelve true si se actualizó al menos un registro
@@ -109,8 +115,8 @@ export async function updateProductDisp(productId, disponibilidad) {
 
 // Crear producto
 export async function createProduct(product) {
-    const { nombre, marca, modelo, descripción, 
-      material, tipo_producto, capacidad, precio, disponibilidad
+    const { nombre, marca, modelo, descripción, material, tipo_producto, 
+      capacidad_min, capacidad_max, precio, disponibilidad
      } = product;
     // Obtener el número de filas en la tabla
     const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
@@ -120,11 +126,11 @@ export async function createProduct(product) {
     const producto = rowCount + 1;
   
     const query = `
-      INSERT INTO Productos (id_producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      INSERT INTO Productos (id_producto, nombre, marca, modelo, descripción, material, tipo_producto, cap_min, cap_max, precio, disponibilidad)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *
     `;
-    const values = [producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad, precio, disponibilidad];
+    const values = [producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];
