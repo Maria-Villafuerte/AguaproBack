@@ -3,7 +3,7 @@ import express from 'express';
 const router = express.Router();
 
 import { 
-  addTipoProducto, getTiposProducto, addCapacidad, getCapacidad
+  addTipoProducto, getTiposProducto
 } from '../dbFunctions/db_characteristics.js';
 
 // Endpoints para características
