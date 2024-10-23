@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import express from 'express';
-import multer from 'multer';
+import multer from 'multer'; // Para manejar el archivo subido
+import { Readable } from 'stream'; // Para convertir el buffer a stream
 
 const router = express.Router();
 
@@ -18,11 +19,20 @@ oauth2Client.setCredentials({
 // Inicializa el servicio de Google Drive
 const drive = google.drive({
   version: 'v3',
-  auth: oauth2Client,
+  auth: oauth2Client
 });
 
-// Configuración de multer para manejar archivos en memoria
+// Configuración de multer para manejar archivos subidos en memoria
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Función para convertir el buffer en un stream
+function bufferToStream(buffer) {
+  const readable = new Readable();
+  readable._read = () => {}; // _read is required but you can noop it
+  readable.push(buffer);
+  readable.push(null);
+  return readable;
+}
 
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
@@ -33,7 +43,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
     const media = {
       mimeType: req.file.mimetype,
-      body: Buffer.from(req.file.buffer), // Utiliza el buffer directamente
+      body: bufferToStream(req.file.buffer), // Convierte el buffer a stream
     };
 
     const response = await drive.files.create({
