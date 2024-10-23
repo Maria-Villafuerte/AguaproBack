@@ -1,6 +1,8 @@
 import { google } from 'googleapis';
 import express from 'express';
 import multer from 'multer'; // Para manejar el archivo subido
+import fs from 'fs';
+import path from 'path'; // Para manejar las rutas de archivos
 
 const router = express.Router();
 
@@ -21,31 +23,41 @@ const drive = google.drive({
   auth: oauth2Client
 });
 
-// Configuración de multer para manejar archivos subidos en memoria
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// Configuración de multer para manejar archivos subidos
+const upload = multer({ dest: 'uploads/' });
 
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
+    // Verificar que el archivo exista
+    if (!req.file) {
+      return res.status(400).send('No se ha proporcionado un archivo.');
+    }
+
+    // Metadatos del archivo
     const fileMetadata = {
       name: req.file.originalname, // Nombre del archivo en Google Drive
     };
 
+    // Media object para Google Drive
     const media = {
       mimeType: req.file.mimetype,
-      body: req.file.buffer, // Usar el buffer en lugar de un archivo del sistema
+      body: fs.createReadStream(path.join(__dirname, '..', req.file.path)), // Lee el archivo subido como flujo
     };
 
+    // Subir el archivo a Google Drive
     const response = await drive.files.create({
       resource: fileMetadata,
       media: media,
       fields: 'id',
     });
 
+    // Elimina el archivo temporal después de subirlo
+    fs.unlinkSync(req.file.path);
+
     res.status(200).json({ fileId: response.data.id });
   } catch (error) {
-    console.error(error);
+    console.error('Error al subir el archivo:', error);
     res.status(500).json({ error: 'Error al subir el archivo' });
   }
 });
