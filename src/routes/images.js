@@ -13,7 +13,6 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 oauth2Client.setCredentials({
-  access_token: process.env.GOOGLE_ACCESS_TOKEN,
   refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
 });
 
@@ -37,6 +36,10 @@ function bufferToStream(buffer) {
 
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  
   try {
     const fileMetadata = {
       name: req.file.originalname, // Nombre del archivo en Google Drive
