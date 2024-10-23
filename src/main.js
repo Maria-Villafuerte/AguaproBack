@@ -42,6 +42,10 @@ app.use('', statisticsRoutes);
 import mailRoute from './routes/mail.js';
 app.use('', mailRoute);
 
+// Usar la ruta de image
+import imagesRoute from './routes/images.js';
+app.use('/images', imagesRoute);
+
 // Exportamos app para poder usarla en los tests
 export default app;
 
