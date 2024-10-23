@@ -36,18 +36,19 @@ function bufferToStream(buffer) {
 
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
+  const file = req.file; // Aquí debe estar el archivo subido
   if (!file) {
     return res.status(400).send('No file uploaded.');
   }
-  
+
   try {
     const fileMetadata = {
-      name: req.file.originalname, // Nombre del archivo en Google Drive
+      name: file.originalname, // Nombre del archivo en Google Drive
     };
 
     const media = {
-      mimeType: req.file.mimetype,
-      body: bufferToStream(req.file.buffer), // Convierte el buffer a stream
+      mimeType: file.mimetype,
+      body: bufferToStream(file.buffer), // Convierte el buffer a stream
     };
 
     const response = await drive.files.create({
