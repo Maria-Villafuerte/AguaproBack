@@ -21,8 +21,9 @@ const drive = google.drive({
   auth: oauth2Client
 });
 
-// Configuración de multer para manejar archivos subidos
-const upload = multer({ dest: 'uploads/' });
+// Configuración de multer para manejar archivos subidos en memoria
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
@@ -33,17 +34,14 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
     const media = {
       mimeType: req.file.mimetype,
-      body: fs.createReadStream(req.file.path), // El archivo subido
+      body: req.file.buffer, // Usar el buffer en lugar de un archivo del sistema
     };
 
-    const response = drive.files.create({
+    const response = await drive.files.create({
       resource: fileMetadata,
       media: media,
       fields: 'id',
     });
-
-    // Elimina el archivo temporal después de subirlo
-    fs.unlinkSync(req.file.path);
 
     res.status(200).json({ fileId: response.data.id });
   } catch (error) {
