@@ -203,14 +203,24 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
         fields: 'id',
       });
 
-      // 4. Enviar la respuesta con el ID del nuevo archivo
+      const newFileId = newFile.data.id
+      // Asignar permisos de visualización pública
+      await drive.permissions.create({
+        newFileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+
+      // Enviar la respuesta con el ID del nuevo archivo
       res.json({
         message: 'Archivo reemplazado con éxito',
-        fileId: newFile.data.id,
+        fileId: newFileId,
       });
     } else {
       res.status(404).json({
-        message: 'Archivo no encontrado para reemplazar',
+        message: `Archivo ${fileName} no encontrado para reemplazar`,
       });
     }
   } catch (error) {
