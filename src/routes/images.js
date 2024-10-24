@@ -114,14 +114,15 @@ router.get('/visualize/:fileName', async (req, res) => {
   }
 });
 
-router.post('/update/:fileName', upload.single('file'), async (req, res) => {
+router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
   const { fileName } = req.params;
 
   try {
+    // 1. Buscar el archivo por nombre
     const response = await drive.files.list({
-      q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
-      fields: 'files(id, name)', // Obtener solo el ID y nombre
-      pageSize: 1, // Limitar a un solo archivo
+      q: `name='${fileName}' and trashed=false`,
+      fields: 'files(id, name)',
+      pageSize: 1,
     });
 
     const files = response.data.files;
@@ -129,27 +130,36 @@ router.post('/update/:fileName', upload.single('file'), async (req, res) => {
     if (files.length) {
       const fileId = files[0].id;
 
+      // 2. Eliminar el archivo antiguo
+      await drive.files.delete({ fileId });
+
+      // 3. Subir el nuevo archivo
+      const fileMetadata = { name: fileName };
       const media = {
         mimeType: req.file.mimetype,
         body: fs.createReadStream(req.file.path),
       };
 
-      // Actualiza el archivo con el nuevo contenido
-      const updatedFile = drive.files.update({
-        fileId: fileId,
+      const newFile = await drive.files.create({
+        resource: fileMetadata,
         media: media,
         fields: 'id',
       });
 
+      // 4. Enviar la respuesta con el ID del nuevo archivo
       res.json({
-        message: 'Archivo actualizado con éxito',
-        fileId: updatedFile.data.id,
+        message: 'Archivo reemplazado con éxito',
+        fileId: newFile.data.id,
+      });
+    } else {
+      res.status(404).json({
+        message: 'Archivo no encontrado para reemplazar',
       });
     }
   } catch (error) {
-    console.error('Error al actualizar archivo:', error);
+    console.error('Error al reemplazar archivo:', error);
     res.status(500).json({
-      message: 'Error al actualizar archivo',
+      message: 'Error al reemplazar archivo',
       error: error.message,
     });
   }
