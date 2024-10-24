@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import express from 'express';
 import multer from 'multer'; // Para manejar el archivo subido
 import { Readable } from 'stream'; // Para convertir el buffer a stream
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -88,7 +89,7 @@ router.get('/visualize/:fileName', async (req, res) => {
       const fileId = files[0].id;
 
       // Obtener el archivo usando su ID
-      const file = drive.files.get(
+      const file = await drive.files.get(
         { fileId, alt: 'media' },
         { responseType: 'stream' }
       );
