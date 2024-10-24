@@ -172,6 +172,9 @@ router.get('/getLink/:fileName', async (req, res) => {
 
 // Endpoint para modificar una imagen
 router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'Archivo de reemplazo no subido correctamente' });
+  }
   const { fileName } = req.params;
 
   try {
@@ -190,11 +193,15 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
       // 2. Eliminar el archivo antiguo
       await drive.files.delete({ fileId });
 
-      // 3. Subir el nuevo archivo
-      const fileMetadata = { name: fileName };
+      const folderId = '1NbbMCg2VslIaUjttwJSIuwTlzR8FvjQ0';
+      // Subir el nuevo archivo
+      const fileMetadata = { 
+        name: fileName,
+        parents: [folderId],           // Subir a la carpeta específica
+      };
       const media = {
         mimeType: req.file.mimetype,
-        body: fs.createReadStream(req.file.path),
+        body: bufferToStream(req.file),
       };
 
       const newFile = await drive.files.create({
@@ -219,7 +226,6 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
         fileId: newFileId,
       });
     } else {
-      console.log(`Archivos encontrados: ${JSON.stringify(response.data.files)}`);
       res.status(404).json({
         message: `Archivo ${fileName} no encontrado para reemplazar`,
       });
