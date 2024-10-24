@@ -219,6 +219,7 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
         fileId: newFileId,
       });
     } else {
+      console.log(`Archivos encontrados: ${JSON.stringify(response.data.files)}`);
       res.status(404).json({
         message: `Archivo ${fileName} no encontrado para reemplazar`,
       });
