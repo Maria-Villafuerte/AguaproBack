@@ -44,7 +44,7 @@ router.post('/upload/:productId', upload.single('file'), async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  // Aquí está el ID de la carpeta donde quieres subir el archivo
+  // ID de la carpeta donde se quiere subir el archivo
   const folderId = '1NbbMCg2VslIaUjttwJSIuwTlzR8FvjQ0';
 
   try {
@@ -64,7 +64,17 @@ router.post('/upload/:productId', upload.single('file'), async (req, res) => {
       fields: 'id',
     });
 
-    res.status(200).json({ fileId: response.data.id });
+    const fileId = response.data.id
+    // Asignar permisos de visualización pública
+    await drive.permissions.create({
+      fileId,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone',
+      },
+    });
+
+    res.status(200).json({ fileId: fileId });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al subir el archivo' });
@@ -115,15 +125,61 @@ router.get('/visualize/:fileName', async (req, res) => {
   }
 });
 
+// Endpoint para obtener un archivo a través de enlace
+router.get('/getLink/:fileName', async (req, res) => {
+  const { fileName } = req.params;
+
+  try {
+    // Buscar el archivo por nombre
+    const response = await drive.files.list({
+      q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
+      fields: 'files(id, name)', // Obtener solo el ID y nombre
+      pageSize: 1, // Limitar a un solo archivo
+    });
+
+    const files = response.data.files;
+
+    if (files.length) {
+      const fileId = files[0].id;
+
+      // Obtener el enlace público del archivo
+      const file = await drive.files.get({
+        fileId,
+        fields: 'webViewLink, webContentLink',
+      });
+
+      // Devolver la respuesta con los enlaces públicos
+      res.json({
+        message: 'Archivo encontrado',
+        fileId: fileId,
+        webViewLink: file.data.webViewLink, // Enlace para visualizar el archivo
+      });
+
+    } else {
+      // Si no se encuentra el archivo
+      res.status(404).json({
+        message: 'No file found with the specified name',
+      });
+    }
+  } catch (error) {
+    console.error('Error processing request:', error);
+    res.status(500).json({
+      message: 'Error processing request',
+      error: error.message,
+    });
+  }
+});
+
+// Endpoint para modificar una imagen
 router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
   const { fileName } = req.params;
 
   try {
-    // 1. Buscar el archivo por nombre
+    // Buscar el archivo por nombre
     const response = await drive.files.list({
-      q: `name='${fileName}' and trashed=false`,
-      fields: 'files(id, name)',
-      pageSize: 1,
+      q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
+      fields: 'files(id, name)', // Obtener solo el ID y nombre
+      pageSize: 1, // Limitar a un solo archivo
     });
 
     const files = response.data.files;
