@@ -35,9 +35,9 @@ function bufferToStream(buffer) {
 }
 
 // POST para subir imágenes a Google Drive
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload/:productId', upload.single('file'), async (req, res) => {
   const file = req.file; // Aquí debe estar el archivo subido
-  const filename = req.productID; // ID para el nombre de archivo
+  const filename = req.params.productId; // ID para el nombre de archivo
 
   if (!file) {
     return res.status(400).send('No file uploaded.');
@@ -70,39 +70,49 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// Endpoint para obtener el ID del archivo basado en su nombre
-router.get('/findFileByName/:fileName', async (req, res) => {
+// Endpoint para obtener un archivo basado en su nombre
+router.get('/visualize/:fileName', async (req, res) => {
   const { fileName } = req.params;
 
   try {
+    // Buscar el archivo por nombre
     const response = await drive.files.list({
       q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
-      fields: 'files(id, name)', // Especifica que queremos obtener el ID y el nombre del archivo
-      pageSize: 1, // Limita el número de archivos para evitar múltiples coincidencias
+      fields: 'files(id, name)', // Obtener solo el ID y nombre
+      pageSize: 1, // Limitar a un solo archivo
     });
 
     const files = response.data.files;
 
     if (files.length) {
-      res.json({
-        message: 'File found',
-        file: {
-          id: files[0].id,
-          name: files[0].name,
-        },
-      });
+      const fileId = files[0].id;
+
+      // Obtener el archivo usando su ID
+      const file = await drive.files.get(
+        { fileId, alt: 'media' },
+        { responseType: 'stream' }
+      );
+
+      // Enviar el archivo como respuesta (streaming)
+      file.data
+        .on('end', () => console.log('Descarga finalizada'))
+        .on('error', (error) => res.status(500).send('Error al descargar la imagen'))
+        .pipe(res);
+
     } else {
+      // Si no se encuentra el archivo
       res.status(404).json({
         message: 'No file found with the specified name',
       });
     }
   } catch (error) {
-    console.error('Error finding file:', error);
+    console.error('Error processing request:', error);
     res.status(500).json({
-      message: 'Error finding file',
+      message: 'Error processing request',
       error: error.message,
     });
   }
 });
+
 
 export default router;
