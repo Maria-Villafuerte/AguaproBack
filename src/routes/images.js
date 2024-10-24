@@ -68,4 +68,39 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+// Endpoint para obtener el ID del archivo basado en su nombre
+app.get('/findFileByName/:fileName', async (req, res) => {
+  const { fileName } = req.params;
+
+  try {
+    const response = await drive.files.list({
+      q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
+      fields: 'files(id, name)', // Especifica que queremos obtener el ID y el nombre del archivo
+      pageSize: 1, // Limita el número de archivos para evitar múltiples coincidencias
+    });
+
+    const files = response.data.files;
+
+    if (files.length) {
+      res.json({
+        message: 'File found',
+        file: {
+          id: files[0].id,
+          name: files[0].name,
+        },
+      });
+    } else {
+      res.status(404).json({
+        message: 'No file found with the specified name',
+      });
+    }
+  } catch (error) {
+    console.error('Error finding file:', error);
+    res.status(500).json({
+      message: 'Error finding file',
+      error: error.message,
+    });
+  }
+});
+
 export default router;
