@@ -213,7 +213,7 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
       const newFileId = newFile.data.id
       // Asignar permisos de visualización pública
       await drive.permissions.create({
-        newFileId,
+        fileId: newFileId,
         requestBody: {
           role: 'reader',
           type: 'anyone',
