@@ -37,6 +37,8 @@ function bufferToStream(buffer) {
 // POST para subir imágenes a Google Drive
 router.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file; // Aquí debe estar el archivo subido
+  const filename = req.productID; // ID para el nombre de archivo
+
   if (!file) {
     return res.status(400).send('No file uploaded.');
   }
@@ -46,7 +48,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
   try {
     const fileMetadata = {
-      name: file.originalname, // Nombre del archivo en Google Drive
+      name: filename, // Nombre del archivo en Google Drive
       parents: [folderId],           // Subir a la carpeta específica
     };
 
@@ -69,7 +71,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 // Endpoint para obtener el ID del archivo basado en su nombre
-app.get('/findFileByName/:fileName', async (req, res) => {
+router.get('/findFileByName/:fileName', async (req, res) => {
   const { fileName } = req.params;
 
   try {
