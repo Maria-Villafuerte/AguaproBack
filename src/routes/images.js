@@ -88,7 +88,7 @@ router.get('/visualize/:fileName', async (req, res) => {
       const fileId = files[0].id;
 
       // Obtener el archivo usando su ID
-      const file = await drive.files.get(
+      const file = drive.files.get(
         { fileId, alt: 'media' },
         { responseType: 'stream' }
       );
@@ -114,5 +114,45 @@ router.get('/visualize/:fileName', async (req, res) => {
   }
 });
 
+router.post('/update/:fileName', upload.single('file'), async (req, res) => {
+  const { fileName } = req.params;
+
+  try {
+    const response = await drive.files.list({
+      q: `name='${fileName}' and trashed=false`, // Consulta el archivo por nombre y no en la papelera
+      fields: 'files(id, name)', // Obtener solo el ID y nombre
+      pageSize: 1, // Limitar a un solo archivo
+    });
+
+    const files = response.data.files;
+
+    if (files.length) {
+      const fileId = files[0].id;
+
+      const media = {
+        mimeType: req.file.mimetype,
+        body: fs.createReadStream(req.file.path),
+      };
+
+      // Actualiza el archivo con el nuevo contenido
+      const updatedFile = drive.files.update({
+        fileId: fileId,
+        media: media,
+        fields: 'id',
+      });
+
+      res.json({
+        message: 'Archivo actualizado con éxito',
+        fileId: updatedFile.data.id,
+      });
+    }
+  } catch (error) {
+    console.error('Error al actualizar archivo:', error);
+    res.status(500).json({
+      message: 'Error al actualizar archivo',
+      error: error.message,
+    });
+  }
+});
 
 export default router;
