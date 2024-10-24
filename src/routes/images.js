@@ -41,9 +41,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
+  // Aquí está el ID de la carpeta donde quieres subir el archivo
+  const folderId = '1NbbMCg2VslIaUjttwJSIuwTlzR8FvjQ0';
+
   try {
     const fileMetadata = {
       name: file.originalname, // Nombre del archivo en Google Drive
+      parents: [folderId],           // Subir a la carpeta específica
     };
 
     const media = {
