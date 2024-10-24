@@ -201,7 +201,7 @@ router.post('/replace/:fileName', upload.single('file'), async (req, res) => {
       };
       const media = {
         mimeType: req.file.mimetype,
-        body: bufferToStream(req.file),
+        body: bufferToStream(req.file.buffer),
       };
 
       const newFile = await drive.files.create({
