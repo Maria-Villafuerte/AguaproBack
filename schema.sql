@@ -25,7 +25,7 @@ CREATE TABLE Productos (
 CREATE TABLE Solicitud_servicio (
     id_solicitud SERIAL PRIMARY KEY,
     correo VARCHAR(50) NOT NULL,
-    telefono VARCHAR(50) NOT NULL,
+    telefono VARCHAR(8) NOT NULL,
     empresa VARCHAR(50) NOT NULL,
     departamento INT NOT NULL,
     tipo_servicio INT NOT NULL,
