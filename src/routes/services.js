@@ -8,10 +8,10 @@ const router = express.Router();
 router.get('/solicitudes', async (req, res) => {
     try {
         const solicitudes = await getSolicitudes();
-        res.status(200).json(solicitudes);
+        res.status(200).json({ status: 'success', message: 'Se han obtenido las solicitudes.', data: solicitudes});
     } catch (error) {
         console.error('Error al obtener las solicitudes:', error);
-        res.status(500).json({ message: 'Error al obtener las solicitudes.' });
+        res.status(500).json({ status: 'failed', message: 'Error al obtener las solicitudes.' });
     }
 });
 
@@ -19,10 +19,10 @@ router.get('/solicitudes', async (req, res) => {
 router.get('/departamentos', async (req, res) => {
     try {
         const departamentos = await getDepartamentos();
-        res.status(200).json(departamentos);
+        res.status(200).json({ status: 'success', message: 'Se han obtenido los departamentos.', data: departamentos});
     } catch (error) {
         console.error('Error al obtener los departamentos:', error);
-        res.status(500).json({ message: 'Error al obtener los departamentos.' });
+        res.status(500).json({status: 'failed', message: 'Error al obtener los departamentos.' });
     }
 });
 
@@ -30,10 +30,10 @@ router.get('/departamentos', async (req, res) => {
 router.get('/servicios', async (req, res) => {
     try {
         const servicios = await getServicios();
-        res.status(200).json(servicios);
+        res.status(200).json({ status: 'success', message: 'Se han obtenido los tipos de servicio.', data: servicios});
     } catch (error) {
         console.error('Error al obtener los servicios:', error);
-        res.status(500).json({ message: 'Error al obtener los servicios.' });
+        res.status(500).json({status: 'failed', message: 'Error al obtener los servicios.' });
     }
 });
 
@@ -42,10 +42,10 @@ router.post('/solicitud', async (req, res) => {
     const solicitud = req.body;
     try {
         const nuevaSolicitud = await createRequest(solicitud);
-        res.status(201).json(nuevaSolicitud);
+        res.status(201).json({ status: 'success', message: 'Se ha guardado la solicitud.', data: nuevaSolicitud});
     } catch (error) {
         console.error('Error al crear la solicitud:', error);
-        res.status(500).json({ message: 'Error al crear la solicitud.' });
+        res.status(500).json({status: 'failed', message: 'Error al crear la solicitud.' });
     }
 });
 
@@ -56,10 +56,10 @@ router.put('/solicitud/:id', async (req, res) => {
 
     try {
         const solicitudActualizada = await updateRequest(id_solicitud, estado);
-        res.status(200).json(solicitudActualizada);
+        res.status(200).json({ status: 'success', message: 'Se han actualizado el estado de la solicitud.', data: solicitudActualizada});
     } catch (error) {
         console.error('Error al actualizar la solicitud:', error);
-        res.status(500).json({ message: 'Error al actualizar la solicitud.' });
+        res.status(500).json({status: 'failed', message: 'Error al actualizar la solicitud.' });
     }
 });
 
@@ -69,10 +69,10 @@ router.delete('/solicitud/:id', async (req, res) => {
 
     try {
         const solicitudEliminada = await deleteRequest(id_solicitud);
-        res.status(200).json({ message: 'Solicitud eliminada con éxito.' });
+        res.status(200).json({ status: 'success', message: 'Solicitud eliminada con éxito.', data: solicitudEliminada});
     } catch (error) {
         console.error('Error al eliminar la solicitud:', error);
-        res.status(500).json({ message: 'Error al eliminar la solicitud.' });
+        res.status(500).json({status: 'failed', message: 'Error al eliminar la solicitud.' });
     }
 });
 
@@ -81,10 +81,10 @@ router.post('/servicio', async (req, res) => {
     const { nombre } = req.body;
     try {
         const nuevoServicio = await createService(nombre);
-        res.status(201).json(nuevoServicio);
+        res.status(201).json({ status: 'success', message: 'Se ha guardado el servicio.', data: nuevoServicio});
     } catch (error) {
         console.error('Error al crear el servicio:', error);
-        res.status(500).json({ message: 'Error al crear el servicio.' });
+        res.status(500).json({status: 'failed', message: 'Error al crear el servicio.' });
     }
 });
 
@@ -94,10 +94,10 @@ router.put('/servicio/:id', async (req, res) => {
     const { nombre } = req.body;
     try {
         const servicioActualizado = await updateService(idServicio, nombre);
-        res.status(200).json(servicioActualizado);
+        res.status(200).json({ status: 'success', message: 'Se han actualizado el servicio.', data: servicioActualizado});
     } catch (error) {
         console.error('Error al actualizar el servicio:', error);
-        res.status(500).json({ message: 'Error al actualizar el servicio.' });
+        res.status(500).json({status: 'failed', message: 'Error al actualizar el servicio.' });
     }
 });
 
