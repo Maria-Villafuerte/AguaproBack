@@ -22,6 +22,10 @@ app.use('', charsRoutes);
 import productsRoutes from './routes/products.js';
 app.use('', productsRoutes);
 
+// Usar la ruta de image
+import servicesRoutes from './routes/services.js';
+app.use('', servicesRoutes);
+
 // Usar las rutas de users
 import userRoutes from './routes/users.js';
 app.use('', userRoutes);

@@ -21,6 +21,32 @@ CREATE TABLE Productos (
     FOREIGN KEY (tipo_producto) REFERENCES Tipo_producto(id_tipo)
 );
 
+-- Tabla Solicitud_servicio
+CREATE TABLE Solicitud_servicio (
+    id_solicitud SERIAL PRIMARY KEY,
+    correo VARCHAR(50) NOT NULL,
+    telefono VARCHAR(8) NOT NULL,
+    empresa VARCHAR(50) NOT NULL,
+    departamento INT NOT NULL,
+    tipo_servicio INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_creacion DATE DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(30) NOT NULL DEFAULT 'pendiente',
+    FOREIGN KEY (tipo_servicio) REFERENCES Servicios(id_tipo),
+    FOREIGN KEY (departamento) REFERENCES Departamentos(id_departamento)
+);
+
+-- Tabla Servicios
+CREATE TABLE Servicios (
+    id_tipo SERIAL PRIMARY KEY,
+    nombre VARCHAR(50)
+);
+-- Tabla Departamentos
+CREATE TABLE Departamentos (
+    id_departamento INT PRIMARY KEY,
+    nombre VARCHAR(50)
+);
+
 -- Tabla Clientes
 CREATE TABLE Clientes (
     id_cliente INT PRIMARY KEY,
@@ -71,15 +97,8 @@ CREATE TABLE Factura (
     FOREIGN KEY (id_descuento) REFERENCES Codigos(id_codigo)
 );
 
--- Tabla Servicio
-CREATE TABLE Servicio (
-    id_servicio INT PRIMARY KEY,
-    nombre VARCHAR(50),
-    descripcion TEXT
-);
-
 -- Tabla Recuento
--- Para que nos sirva como intermediario entre pedidos y productos, por si acaso se compra 2 productos del mismo tipo en el mismo pedido.
+-- intermediario entre pedidos y productos, por si acaso se compra +1 productos del mismo tipo en el mismo pedido.
 CREATE TABLE Recuento (
     Pedido_Fk INT,
     Producto_Fk INT,
