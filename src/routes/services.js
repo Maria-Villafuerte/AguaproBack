@@ -1,6 +1,6 @@
 import express from 'express';
 import { getSolicitudes, getDepartamentos, getServicios, createRequest, updateRequest, deleteRequest,
-    createService, updateService } from '../dbFunctions/db_services';
+    createService, updateService } from '../dbFunctions/db_services.js';
 
 const router = express.Router();
 
