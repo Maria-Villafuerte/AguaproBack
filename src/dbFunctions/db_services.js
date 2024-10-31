@@ -42,6 +42,7 @@ export async function updateRequest(id_solicitud, estado) {
     const query = `
       UPDATE Solicitud_servicio SET estado = $2
       WHERE id_solicitud = $1
+      RETURNING *
     `;
     const values = [id_solicitud, estado];
     try {
