@@ -37,6 +37,37 @@ export async function createRequest(solicitud) {
     }
 }
 
+// Modificar estado de solicitud
+export async function updateRequest(id_solicitud, estado) {
+    const query = `
+      UPDATE Solicitud_servicio SET estado = $2
+      WHERE id_solicitud = $1
+    `;
+    const values = [id_solicitud, estado];
+    try {
+        const result = await conn.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        console.error('Error en la consulta SQL:', error);
+        throw error;
+    }
+}
+
+// Eliminar solicitud
+export async function deleteRequest(id_solicitud) {
+    const query = `
+      DELETE FROM Solicitud_servicio WHERE id_solicitud = $1
+    `;
+    const values = [id_solicitud];
+    try {
+      const result = await conn.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error en la consulta SQL:', error);
+      throw error;
+    }
+}
+
 // Crear servicio
 export async function createService(nombre) {
     const query = `

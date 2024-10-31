@@ -31,6 +31,7 @@ CREATE TABLE Solicitud_servicio (
     tipo_servicio INT NOT NULL,
     mensaje TEXT NOT NULL,
     fecha_creacion DATE DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(30) NOT NULL DEFAULT 'pendiente',
     FOREIGN KEY (tipo_servicio) REFERENCES Servicios(id_tipo),
     FOREIGN KEY (departamento) REFERENCES Departamentos(id_departamento)
 );

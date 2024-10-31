@@ -1,5 +1,6 @@
 import express from 'express';
-import { getSolicitudes, getDepartamentos, getServicios, createRequest, createService, updateService } from './tuArchivoDeFunciones';
+import { getSolicitudes, getDepartamentos, getServicios, createRequest, updateRequest, deleteRequest,
+    createService, updateService } from './tuArchivoDeFunciones';
 
 const router = express.Router();
 
@@ -45,6 +46,33 @@ router.post('/solicitud', async (req, res) => {
     } catch (error) {
         console.error('Error al crear la solicitud:', error);
         res.status(500).json({ message: 'Error al crear la solicitud.' });
+    }
+});
+
+// Actualizar estado de una solicitud
+router.put('/solicitud/:id', async (req, res) => {
+    const id_solicitud = req.params.id;
+    const { estado } = req.body;
+
+    try {
+        const solicitudActualizada = await updateRequest(id_solicitud, estado);
+        res.status(200).json(solicitudActualizada);
+    } catch (error) {
+        console.error('Error al actualizar la solicitud:', error);
+        res.status(500).json({ message: 'Error al actualizar la solicitud.' });
+    }
+});
+
+// Eliminar solicitud
+router.delete('/solicitud/:id', async (req, res) => {
+    const id_solicitud = req.params.id;
+
+    try {
+        const solicitudEliminada = await deleteRequest(id_solicitud);
+        res.status(200).json({ message: 'Solicitud eliminada con éxito.' });
+    } catch (error) {
+        console.error('Error al eliminar la solicitud:', error);
+        res.status(500).json({ message: 'Error al eliminar la solicitud.' });
     }
 });
 
