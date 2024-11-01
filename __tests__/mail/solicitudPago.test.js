@@ -15,7 +15,7 @@ describe('Mailer API tests for required payment', () => {
     it('should send an email confirmation', async () => {
         const response = await request(app)
             .post('/pedido/pago')
-            .send({ mailto: 'con22787@uvg.edu.gt'}); 
+            .send({ mailto: 'con22787@uvg.edu.gt', metodo: 'la transferencia'}); 
 
         expect(response.status).toBe(200);
         expect(response.text).toBe('Correo enviado');
