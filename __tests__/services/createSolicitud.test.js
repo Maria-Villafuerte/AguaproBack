@@ -14,6 +14,7 @@ afterAll((done) => {
 describe('POST /solicitud - Crear una nueva solicitud', () => {
     test('Debe crear una nueva solicitud con éxito', async () => {
       const nuevaSolicitud = { 
+        nombre: 'PersonaABC',
         correo: 'ejemplo@gmail.com', 
         telefono: '11112222', 
         empresa: 'empresa fantasma 123', 
