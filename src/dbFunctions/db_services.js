@@ -20,14 +20,14 @@ export async function getServicios() {
 
 // Crear solicitud
 export async function createRequest(solicitud) {
-    const { correo, telefono, empresa, departamento, tipo_servicio, mensaje} = solicitud;
+    const { nombre, correo, telefono, empresa, departamento, tipo_servicio, mensaje} = solicitud;
 
     const query = `
-      INSERT INTO Solicitud_servicio (correo, telefono, empresa, departamento, tipo_servicio, mensaje)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO Solicitud_servicio (nombre, correo, telefono, empresa, departamento, tipo_servicio, mensaje)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id_solicitud
     `;
-    const values = [correo, telefono, empresa, departamento, tipo_servicio, mensaje];
+    const values = [nombre, correo, telefono, empresa, departamento, tipo_servicio, mensaje];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];
