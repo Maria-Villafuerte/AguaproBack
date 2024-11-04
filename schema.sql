@@ -7,6 +7,7 @@ CREATE TABLE Tipo_producto (
 -- Tabla Productos
 CREATE TABLE Productos (
     id_producto INT PRIMARY KEY,
+    clave VARCHAR(50),  -- Nuevo atributo agregado
     nombre VARCHAR(30) NOT NULL,
     marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50) NOT NULL,
