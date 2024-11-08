@@ -18,6 +18,18 @@ export async function getServicios() {
     return result.rows.length > 0 ? result.rows : 'No requests found.'
 }
 
+export async function getDepartamentoById(idDepartamento) {
+  const result = await conn.query(`SELECT nombre FROM Departamentos 
+      WHERE id_departamento = $1`, [idDepartamento])
+  return result.rows.length > 0 ? result.rows[0] : 'No requests found.'
+}
+
+export async function getServicioById(idServicio) {
+  const result = await conn.query(`SELECT nombre FROM Servicios 
+      WHERE id_tipo = $1`, [idServicio])
+  return result.rows.length > 0 ? result.rows[0] : 'No requests found.'
+}
+
 // Crear solicitud
 export async function createRequest(solicitud) {
     const { nombre, correo, telefono, empresa, departamento, tipo_servicio, mensaje} = solicitud;

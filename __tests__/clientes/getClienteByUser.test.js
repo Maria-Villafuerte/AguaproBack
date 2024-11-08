@@ -13,7 +13,7 @@ afterAll((done) => {
 
 describe('GET /clientes/user/:user_reference', () => {
   it('should retrieve the client successfully by user_reference', async () => {
-    const user_reference = 2; // Ejemplo de referencia de usuario válida
+    const user_reference = 15; // Ejemplo de referencia de usuario válida
     const response = await request(app).get(`/clientes/user/${user_reference}`);
     
     expect(response.status).toBe(200);

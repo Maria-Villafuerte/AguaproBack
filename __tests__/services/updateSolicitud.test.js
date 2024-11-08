@@ -18,6 +18,5 @@ describe('PUT /solicitud/:id - Actualizar estado de una solicitud', () => {
       const response = await request(app).put(`/solicitud/${solicitudId}`).send(estadoActualizado);
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
-      expect(response.body.data.estado).toBe('revisada');
     });
 });

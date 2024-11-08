@@ -3,6 +3,10 @@ import express from 'express';
 const router = express.Router();
 import nodemailer from 'nodemailer';
 
+import { 
+    getDepartamentoById, getServicioById
+} from '../dbFunctions/db_services.js';
+import { ids } from 'googleapis/build/src/apis/ids/index.js';
 
 // Configura el transportador
 let transporter = nodemailer.createTransport({
@@ -112,5 +116,61 @@ router.post('/pedido/pago', async (req, res) => {
         res.status(500).send('Error al enviar el correo');
     }
 });
+
+router.post('/solicitud/servicio', async (req, res) => {
+    const { mailTo, nombre, correo, telefono, empresa, idDepartamento, idServicio, mensaje } = req.body;
+
+    // Verificar que los campos requeridos estén presentes
+    if (!mailTo || !nombre || !correo || !telefono || !empresa || !idDepartamento || !idServicio || !mensaje) {
+        return res.status(400).json({ status: 'failed', error: 'Todos los campos son obligatorios' });
+    }
+
+    try {
+        const departamento = await getDepartamentoById(idDepartamento);
+        const tipo_servicio = await getServicioById(idServicio);
+
+        if (!departamento) {
+            return res.status(404).json({ status: 'failed', error: 'Department not found' });
+        }
+        if (!tipo_servicio) {
+            return res.status(404).json({ status: 'failed', error: 'Service not found' });
+        }
+  
+        // Configura el contenido del correo
+        const subject = 'Hay una nueva solicitud de servicio';
+        const html = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h1>Hemos recibido una nueva solicitud de servicio</h1>
+                <h3>Estos son los datos recibidos:</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li><strong>Cliente:</strong> ${nombre}</li>
+                    <li><strong>Correo:</strong> ${correo}</li>
+                    <li><strong>Teléfono:</strong> ${telefono}</li>
+                    <li><strong>Empresa:</strong> ${empresa}</li>
+                    <li><strong>Departamento:</strong> ${departamento.nombre}</li>
+                    <li><strong>Servicio solicitado:</strong> ${tipo_servicio.nombre}</li>
+                    <li><strong>Mensaje:</strong><br>${mensaje}</li>
+                </ul>
+                <br />
+                <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
+            </div>
+        `;
+    
+        // Validar que `mailTo` sea un array y que cada correo sea válido
+        if (!Array.isArray(mailTo) || mailTo.some(email => !/\S+@\S+\.\S+/.test(email))) {
+            return res.status(400).json({ status: 'failed', error: 'Uno o más correos electrónicos son inválidos' });
+        }
+  
+        // Enviar correos a cada destinatario en el array `mailTo`
+        const emailPromises = mailTo.map((recipient) => sendEmail(recipient, subject, html));
+        await Promise.all(emailPromises);
+  
+        res.status(200).json({ status: 'success', message: 'Correos enviados' });
+    } catch (error) {
+        console.error('Error al enviar los correos:', error);
+        res.status(500).json({ status: 'failed', error: 'Error al enviar los correos' });
+    }
+});
+
 
 export default router;
