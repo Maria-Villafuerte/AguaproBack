@@ -1,7 +1,10 @@
 import conn from '../conn.js'
 
-export async function saveCliente(nombre, direccion, telefono, nit, user_reference) {
+export async function saveCliente(nombre, direccion, telefono, nit, user_reference, email) {
   try {
+    if (!nombre || !direccion || !telefono || !nit || !user_reference || !email) {
+      throw new Error('Todos los campos son obligatorios');
+    }
     // Start a transaction
     await conn.query('BEGIN');
 
@@ -13,8 +16,9 @@ export async function saveCliente(nombre, direccion, telefono, nit, user_referen
     const newId = maxId + 1;
 
     // Insert the new client with the new id
-    const sql = 'INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
-    const values = [newId, nombre, direccion, telefono, nit, user_reference];
+    const sql = `INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference, email) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+    const values = [newId, nombre, direccion, telefono, nit, user_reference, email];
     const result = await conn.query(sql, values);
 
     // Commit the transaction
@@ -46,9 +50,9 @@ export async function getOneClienteByUser(user_reference) {
   return result.rows[0];
 }
 
-export async function editOneCliente(id, nombre, direccion, telefono, nit, user_reference) {
-  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, user_reference = $6 WHERE id_cliente = $1 RETURNING *';
-  const values = [id, nombre, direccion, telefono, nit, user_reference];
+export async function editOneCliente(id, nombre, direccion, telefono, nit, user_reference, email) {
+  const sql = 'UPDATE Clientes SET nombre = $2, direccion = $3, telefono = $4, nit = $5, user_reference = $6, email = $7 WHERE id_cliente = $1 RETURNING *';
+  const values = [id, nombre, direccion, telefono, nit, user_reference, email];
   const result = await conn.query(sql, values);
   return result.rows[0];
 }

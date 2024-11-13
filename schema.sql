@@ -56,6 +56,7 @@ CREATE TABLE Clientes (
     telefono VARCHAR(8),
     nit VARCHAR(10),
     user_reference INT,
+    email VARCHAR(50),
     FOREIGN KEY (user_reference) REFERENCES users(id)
 );
 

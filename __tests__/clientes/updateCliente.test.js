@@ -39,7 +39,8 @@ describe('PUT /clientes/:id', () => {
       direccion: '456 Calle Secundaria',
       telefono: '87654321',
       nit: '987654321',
-      user_reference: 5
+      user_reference: 5,
+      email: 'abcde@ejemplo.com'
     };
 
     const response = await request(app)
