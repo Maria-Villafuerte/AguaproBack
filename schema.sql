@@ -7,6 +7,7 @@ CREATE TABLE Tipo_producto (
 -- Tabla Productos
 CREATE TABLE Productos (
     id_producto INT PRIMARY KEY,
+    clave VARCHAR(50),  -- Nuevo atributo agregado
     nombre VARCHAR(30) NOT NULL,
     marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50) NOT NULL,
@@ -55,6 +56,7 @@ CREATE TABLE Clientes (
     telefono VARCHAR(8),
     nit VARCHAR(10),
     user_reference INT,
+    email VARCHAR(50),
     FOREIGN KEY (user_reference) REFERENCES users(id)
 );
 
