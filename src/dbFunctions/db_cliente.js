@@ -2,6 +2,10 @@ import conn from '../conn.js'
 
 export async function saveCliente(nombre, direccion, telefono, nit, user_reference, email) {
   try {
+    if (!nombre || !direccion || !telefono || !nit || !user_reference || !email) {
+      console.log(nombre + ' ' + direccion + ' ' + telefono + ' ' + nit + ' ' + user_reference + ' ' + email)
+      throw new Error('Todos los campos son obligatorios');
+    }
     // Start a transaction
     await conn.query('BEGIN');
 
@@ -13,7 +17,8 @@ export async function saveCliente(nombre, direccion, telefono, nit, user_referen
     const newId = maxId + 1;
 
     // Insert the new client with the new id
-    const sql = 'INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+    const sql = `INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference, email) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
     const values = [newId, nombre, direccion, telefono, nit, user_reference, email];
     const result = await conn.query(sql, values);
 
