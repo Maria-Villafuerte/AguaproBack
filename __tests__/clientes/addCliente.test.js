@@ -18,6 +18,7 @@ describe('POST /clientes', () => {
       direccion: '123 Calle Principal',
       telefono: '12345678',
       nit: '123456789',
+      user_reference: 18,
       email: 'abcde@ejemplo.com'
     };
 
