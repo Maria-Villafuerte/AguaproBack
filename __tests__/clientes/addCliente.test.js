@@ -17,7 +17,8 @@ describe('POST /clientes', () => {
       nombre: 'John Doe',
       direccion: '123 Calle Principal',
       telefono: '12345678',
-      nit: '123456789'
+      nit: '123456789',
+      email: 'abcde@ejemplo.com'
     };
 
     const response = await request(app)
