@@ -110,6 +110,7 @@ export async function getAllPedidos() {
         te.nombre AS estado, 
         c.id_cliente, 
         c.nombre AS cliente, 
+        c.email AS contacto,
         f.monto_total, 
         f.nit_empresa, 
         f.id_descuento
@@ -136,6 +137,7 @@ export async function getPedidoById(pedidoId) {
         te.nombre AS estado, 
         c.id_cliente, 
         c.nombre AS cliente, 
+        c.email AS contacto,
         f.monto_total, 
         f.nit_empresa, 
         f.id_descuento
