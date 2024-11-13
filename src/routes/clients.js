@@ -7,9 +7,9 @@ import { saveCliente, getAllClientes, getOneCliente, getOneClienteByUser,
 
 // Client endpoints
 router.post('/clientes', async (req, res) => {
-    const { nombre, direccion, telefono, nit, email } = req.body;
+    const { nombre, direccion, telefono, nit, user_reference, email } = req.body;
     try {
-      const newCliente = await saveCliente(nombre, direccion, telefono, nit, email);
+      const newCliente = await saveCliente(nombre, direccion, telefono, nit, user_reference, email);
       res.status(201).json({ status: 'success', message: 'Cliente creado exitosamente', data: newCliente });
     } catch (error) {
       console.error('Error al crear cliente:', error);
