@@ -173,10 +173,10 @@ router.post('/solicitud/servicio', async (req, res) => {
 });
 
 router.post('/pedidos/revision', async (req, res) => {
-    const { mailTo, nombre, correo, telefono, idPedido } = req.body;
+    const { mailTo, nombre, correo, telefono, idPedido, monto, banco, numAutorizacion } = req.body;
 
     // Verificar que los campos requeridos estén presentes
-    if (!mailTo || !nombre || !correo || !telefono || !idPedido) {
+    if (!mailTo || !nombre || !correo || !telefono || !idPedido || !monto || !banco || !numAutorizacion) {
         return res.status(400).json({ status: 'failed', error: 'Todos los campos son obligatorios' });
     }
 
@@ -187,12 +187,16 @@ router.post('/pedidos/revision', async (req, res) => {
         const html = `
             <div style="font-family: Arial, sans-serif; color: #333;">
                 <h1>Nuevo pedido con opción de pago por transferencia o depósito</h1>
-                <p>Se ha recibido un nuevo pedido, pero debe verificarse la validez del pago.<br /> Estos son los datos del pedido:</p>
+                <p>Se ha recibido un nuevo pedido, pero debe verificarse la validez del pago. Revisa los siguientes datos:</p>
                 <ul style="list-style: none; padding: 0;">
                     <li><strong>Cliente:</strong> ${nombre}</li>
                     <li><strong>Correo:</strong> ${correo}</li>
                     <li><strong>Teléfono:</strong> ${telefono}</li>
+                    <li></li>
                     <li><strong>ID del pedido:</strong> ${idPedido}</li>
+                    <li><strong>Monto de cobro:</strong> ${monto}</li>
+                    <li><strong>Banco destino:</strong> ${banco}</li>
+                    <li><strong>Número de autorización:</strong> ${numAutorizacion}</li>
                 </ul>
                 <br />
                 <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>

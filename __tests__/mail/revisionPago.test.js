@@ -20,7 +20,10 @@ describe("POST /pedidos/revision", () => {
                 nombre: 'Juan Pérez',
                 correo: 'juan@example.com',
                 telefono: '123456789',
-                idPedido: 2
+                idPedido: 2,
+                monto: 450.5,
+                banco: 'G&T',
+                numAutorizacion: '1620-23'
             });
 
         expect(response.statusCode).toBe(200);
@@ -35,7 +38,10 @@ describe("POST /pedidos/revision", () => {
                 nombre: 'Juan Pérez',
                 correo: 'juan@example.com',
                 telefono: '123456789',
-                empresa: 'Empresa Prueba'
+                empresa: 'Empresa Prueba',
+                monto: 450.5,
+                banco: 'G&T',
+                numAutorizacion: '1620-23'
                 //falta idPedido
             });
 
@@ -53,7 +59,10 @@ describe("POST /pedidos/revision", () => {
                 correo: 'juan@example.com',
                 telefono: '123456789',
                 empresa: 'Empresa Prueba',
-                idPedido: 1
+                idPedido: 1,
+                monto: 450.5,
+                banco: 'G&T',
+                numAutorizacion: '1620-23'
             });
 
         expect(response.statusCode).toBe(400);
