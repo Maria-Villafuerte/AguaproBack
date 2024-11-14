@@ -2,7 +2,7 @@ import conn from '../conn.js'
 
 export async function saveCliente(nombre, direccion, telefono, nit, user_reference, email) {
   try {
-    if (!nombre || !direccion || !telefono || !nit || !user_reference || !email) {
+    if (!nombre || !direccion || !telefono || !nit || !email) {
       throw new Error('Todos los campos son obligatorios');
     }
     // Start a transaction
