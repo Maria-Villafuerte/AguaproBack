@@ -53,9 +53,7 @@ describe("POST /pedidos/revision", () => {
                 correo: 'juan@example.com',
                 telefono: '123456789',
                 empresa: 'Empresa Prueba',
-                idDepartamento: 1,
-                idServicio: 2,
-                mensaje: 'Necesito soporte técnico'
+                idPedido: 1
             });
 
         expect(response.statusCode).toBe(400);

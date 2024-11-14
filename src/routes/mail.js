@@ -187,7 +187,7 @@ router.post('/pedidos/revision', async (req, res) => {
         const html = `
             <div style="font-family: Arial, sans-serif; color: #333;">
                 <h1>Nuevo pedido con opción de pago por transferencia o depósito</h1>
-                <h3>Por favor verifica el pago, estos son los datos:</h3>
+                <p>Se ha recibido un nuevo pedido, pero debe verificarse la validez del pago.<br /> Estos son los datos del pedido:</p>
                 <ul style="list-style: none; padding: 0;">
                     <li><strong>Cliente:</strong> ${nombre}</li>
                     <li><strong>Correo:</strong> ${correo}</li>
