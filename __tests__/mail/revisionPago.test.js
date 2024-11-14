@@ -11,10 +11,10 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe("POST /pedido/revision", () => {
+describe("POST /pedidos/revision", () => {
     it("debería enviar correos exitosamente cuando los datos son válidos", async () => {
         const response = await request(app)
-            .post('/pedido/revision')
+            .post('/pedidos/revision')
             .send({
                 mailTo: ['con22787@uvg.edu.gt'], 
                 nombre: 'Juan Pérez',
@@ -30,7 +30,7 @@ describe("POST /pedido/revision", () => {
 
     it("debería retornar error 400 si falta algún campo", async () => {
         const response = await request(app)
-            .post('/pedido/revision')
+            .post('/pedidos/revision')
             .send({
                 nombre: 'Juan Pérez',
                 correo: 'juan@example.com',
@@ -46,7 +46,7 @@ describe("POST /pedido/revision", () => {
 
     it("debería retornar error 400 si el correo en mailTo es inválido", async () => {
         const response = await request(app)
-            .post('/pedido/revision')
+            .post('/pedidos/revision')
             .send({
                 mailTo: ['invalid-email'], // Correo inválido
                 nombre: 'Juan Pérez',
