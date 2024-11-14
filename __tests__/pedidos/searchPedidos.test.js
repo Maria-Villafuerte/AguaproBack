@@ -13,7 +13,7 @@ afterAll((done) => {
 
 describe('GET /search/:searchTerm', () => {
   it('should return pedidos matching the search term', async () => {
-    const response = await request(app).get('/search/Cliente B');
+    const response = await request(app).get('/search/Cliente A');
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
     expect(response.body.data).toBeDefined();
