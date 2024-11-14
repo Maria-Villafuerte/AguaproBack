@@ -36,7 +36,7 @@ router.post('/confirmacion/pedido', async (req, res) => {
     const { mailto } = req.body;
 
     let subject = '¡Gracias por tu compra en Aguatesa en línea!'
-    let html = '<h1>¡Gracias por comprar en Aguatesa!</h1><p>Le daremos seguimiento a tu pedido y mos pondremos en contacto para su envío. Si tienes alguna duda o inconveniente no dudes en contactarnos.</p><footer><strong>Teléfono:</strong> (502) 6670-3030 / 6631-1845 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
+    let html = '<h1>Gracias por comprar en Aguatesa.</h1><p>Le daremos seguimiento a tu pedido y nos pondremos en contacto para su envío. Si tienes alguna duda o inconveniente no dudes en contactarnos.</p><footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -56,7 +56,7 @@ router.post('/confirmacion/servicio', async (req, res) => {
     const { mailto } = req.body;
 
     let subject = '¡Recibimos tu solicitud de servicio!'
-    let html = '<h1>¡Gracias por interesarte en Aguatesa!</h1><p>Tu solicitud será procesada por uno de nuestros vendedores y deberías de recibir un correo de seguimiento en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p><footer><strong>Teléfono:</strong> (502) 6670-3030 / 6631-1845 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
+    let html = '<h1>¡Gracias por interesarte en Aguatesa!</h1><p>Tu solicitud será procesada por uno de nuestros vendedores y deberías de recibir un correo de seguimiento en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p><footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -78,7 +78,7 @@ router.post('/cancelacion', async (req, res) => {
     let subject = 'Hemos cancelado tu pedido en Aguatesa'
     let html = `<h1>Tu pedido ha sido cancelado.</h1>
     <p>Lametablemente debido a <Strong>${razon}</Strong> tu pedido fue cancelado. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p>
-    <footer><strong>Teléfono:</strong> (502) 6670-3030 / 6631-1845 <br />
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br />
     <strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>`
 
     // Validar el correo electrónico
@@ -101,7 +101,7 @@ router.post('/pedido/pago', async (req, res) => {
     let subject = 'Gracias por tu compra en Aguatesa en línea'
     let html = `<h1>¡Gracias por comprar en Aguatesa!</h1><p>Tendremos que confirmar que ${metodo} haya sido procesada correctamente. 
     Esto tomará un par de minutos y deberías de recibir un correo electrónico de confirmación en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p>
-    <footer><strong>Teléfono:</strong> (502) 6670-3030 / 6631-1845 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>`
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>`
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -172,5 +172,47 @@ router.post('/solicitud/servicio', async (req, res) => {
     }
 });
 
+router.post('/pedidos/revision', async (req, res) => {
+    const { mailTo, nombre, correo, telefono, idPedido } = req.body;
+
+    // Verificar que los campos requeridos estén presentes
+    if (!mailTo || !nombre || !correo || !telefono || !idPedido) {
+        return res.status(400).json({ status: 'failed', error: 'Todos los campos son obligatorios' });
+    }
+
+    try {
+  
+        // Configura el contenido del correo
+        const subject = 'Se ha realizado un nuevo pedido';
+        const html = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h1>Nuevo pedido con opción de pago por transferencia o depósito</h1>
+                <h3>Por favor verifica el pago, estos son los datos:</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li><strong>Cliente:</strong> ${nombre}</li>
+                    <li><strong>Correo:</strong> ${correo}</li>
+                    <li><strong>Teléfono:</strong> ${telefono}</li>
+                    <li><strong>ID del pedido:</strong> ${idPedido}</li>
+                </ul>
+                <br />
+                <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
+            </div>
+        `;
+    
+        // Validar que `mailTo` sea un array y que cada correo sea válido
+        if (!Array.isArray(mailTo) || mailTo.some(email => !/\S+@\S+\.\S+/.test(email))) {
+            return res.status(400).json({ status: 'failed', error: 'Uno o más correos electrónicos son inválidos' });
+        }
+  
+        // Enviar correos a cada destinatario en el array `mailTo`
+        const emailPromises = mailTo.map((recipient) => sendEmail(recipient, subject, html));
+        await Promise.all(emailPromises);
+  
+        res.status(200).json({ status: 'success', message: 'Correos enviados' });
+    } catch (error) {
+        console.error('Error al enviar los correos:', error);
+        res.status(500).json({ status: 'failed', error: 'Error al enviar los correos' });
+    }
+});
 
 export default router;
