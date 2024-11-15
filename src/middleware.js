@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import { rolePermissions } from './accessRoles.js';
 
-export default function authenticateToken(req, res, next) {
+export function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   
@@ -16,4 +17,17 @@ export default function authenticateToken(req, res, next) {
     next();
   });
 
+}
+
+export function authorizeRole(resource) {
+  return (req, res, next) => {
+    const userRole = req.user.role;
+
+    // Check if the user's role has permission for the specified resource
+    if (!rolePermissions[userRole]?.includes(resource)) {
+      return res.status(403).send('Access denied');
+    }
+
+    next();
+  };
 }

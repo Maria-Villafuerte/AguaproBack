@@ -1,11 +1,12 @@
 import express from 'express';
 import { getSolicitudes, getDepartamentos, getServicios, createRequest, updateRequest, deleteRequest,
     createService, updateService } from '../dbFunctions/db_services.js';
+import { authenticateToken, authorizeRole } from '../middleware.js';
 
 const router = express.Router();
 
 // Obtener todas las solicitudes de servicio
-router.get('/solicitudes', async (req, res) => {
+router.get('/solicitudes',authenticateToken, authorizeRole('solicitudes'), async (req, res) => {
     try {
         const solicitudes = await getSolicitudes();
         res.status(200).json({ status: 'success', message: 'Se han obtenido las solicitudes.', data: solicitudes});
@@ -50,7 +51,7 @@ router.post('/solicitud', async (req, res) => {
 });
 
 // Actualizar estado de una solicitud
-router.put('/solicitud/:id', async (req, res) => {
+router.put('/solicitud/:id',authenticateToken, authorizeRole('solicitudes'), async (req, res) => {
     const id_solicitud = req.params.id;
     const { estado } = req.body;
 
@@ -64,7 +65,7 @@ router.put('/solicitud/:id', async (req, res) => {
 });
 
 // Eliminar solicitud
-router.delete('/solicitud/:id', async (req, res) => {
+router.delete('/solicitud/:id',authenticateToken, authorizeRole('solicitudes'), async (req, res) => {
     const id_solicitud = req.params.id;
 
     try {
@@ -77,7 +78,7 @@ router.delete('/solicitud/:id', async (req, res) => {
 });
 
 // Crear un nuevo servicio
-router.post('/servicio', async (req, res) => {
+router.post('/servicio',authenticateToken, authorizeRole('solicitudes'), async (req, res) => {
     const { nombre } = req.body;
     try {
         const nuevoServicio = await createService(nombre);
@@ -89,7 +90,7 @@ router.post('/servicio', async (req, res) => {
 });
 
 // Actualizar nombre de un servicio
-router.put('/servicio/:id', async (req, res) => {
+router.put('/servicio/:id',authenticateToken, authorizeRole('solicitudes'), async (req, res) => {
     const idServicio = req.params.id;
     const { nombre } = req.body;
     try {

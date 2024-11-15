@@ -1,11 +1,12 @@
 import express from 'express';
 
 const router = express.Router();
+import { authenticateToken, authorizeRole } from '../middleware.js';
 
 import { getSales, getTotalSales, getTopProducts, getTopClients, getDailySales } from '../dbFunctions/db_statistics.js';
 
 // Get all sales
-router.get('/sales', async (req, res) => {
+router.get('/sales',authenticateToken, authorizeRole('analitica'), async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getSales(fechaInicio, fechaFin);
@@ -16,7 +17,7 @@ router.get('/sales', async (req, res) => {
     }
 });
 
-router.get('/sales/sum', async (req, res) => {
+router.get('/sales/sum',authenticateToken, authorizeRole('analitica'), async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getTotalSales(fechaInicio, fechaFin);
@@ -27,7 +28,7 @@ router.get('/sales/sum', async (req, res) => {
     }
 });
 
-router.get('/sales/products', async (req, res) => {
+router.get('/sales/products',authenticateToken, authorizeRole('analitica'), async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
     try {
         const productos = await getTopProducts(fechaInicio, fechaFin);
@@ -38,7 +39,7 @@ router.get('/sales/products', async (req, res) => {
     }
 });
 
-router.get('/sales/clients', async (req, res) => {
+router.get('/sales/clients',authenticateToken, authorizeRole('analitica'), async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
     try {
         const clientes = await getTopClients(fechaInicio, fechaFin);
@@ -49,7 +50,7 @@ router.get('/sales/clients', async (req, res) => {
     }
 });
 
-router.get('/sales/daily', async (req, res) => {
+router.get('/sales/daily',authenticateToken, authorizeRole('analitica'), async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
     try {
         const ventas = await getDailySales(fechaInicio, fechaFin);

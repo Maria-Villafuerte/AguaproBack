@@ -1,4 +1,5 @@
 import express from 'express';
+import { authenticateToken, authorizeRole } from '../middleware.js';
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Delete a purchase
-  router.delete('/delete_purchase/:pedidoId', async (req, res) => {
+  router.delete('/delete_purchase/:pedidoId', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     const pedidoId = parseInt(req.params.pedidoId, 10);
   
     try {
@@ -42,7 +43,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Get all pedidos
-  router.get('/pedidos', async (req, res) => {
+  router.get('/pedidos', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     try {
       const pedidos = await getAllPedidos();
       return res.status(200).json({ status: 'success', message: 'Se han obtenido los pedidos.', data: pedidos });
@@ -53,7 +54,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Get pedido by ID
-  router.get('/pedidos/:pedidoId', async (req, res) => {
+  router.get('/pedidos/:pedidoId', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     const pedidoId = parseInt(req.params.pedidoId, 10);
   
     try {
@@ -101,7 +102,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Update pedido status
-  router.put('/pedidos/:pedidoId/status', async (req, res) => {
+  router.put('/pedidos/:pedidoId/status', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     const pedidoId = parseInt(req.params.pedidoId, 10);
     const { estatus } = req.body;
   
@@ -119,7 +120,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Update pedido direccion
-  router.put('/pedidos/:pedidoId/direccion', async (req, res) => {
+  router.put('/pedidos/:pedidoId/direccion', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     const pedidoId = parseInt(req.params.pedidoId, 10);
     const { direccion } = req.body;
   
@@ -137,7 +138,7 @@ router.post('/save_purchase', async (req, res) => {
   });
   
   // Update productos by pedido
-  router.put('/pedidos/:pedidoId/productos', async (req, res) => {
+  router.put('/pedidos/:pedidoId/productos', authenticateToken, authorizeRole('pedidos'), async (req, res) => {
     const pedidoId = parseInt(req.params.pedidoId, 10);
     const { productos } = req.body;
   

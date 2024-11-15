@@ -1,4 +1,5 @@
 import express from 'express';
+import { authenticateToken, authorizeRole } from '../middleware.js';
 
 const router = express.Router();
 
@@ -6,7 +7,7 @@ import { saveCliente, getAllClientes, getOneCliente, getOneClienteByUser,
    editOneCliente, deleteOneCliente, editUserCliente } from '../dbFunctions/db_cliente.js';
 
 // Client endpoints
-router.post('/clientes', async (req, res) => {
+  router.post('/clientes', async (req, res) => {
     const { nombre, direccion, telefono, nit, user_reference, email } = req.body;
     try {
       const newCliente = await saveCliente(nombre, direccion, telefono, nit, user_reference, email);
@@ -17,7 +18,7 @@ router.post('/clientes', async (req, res) => {
     }
   });
   
-  router.get('/clientes', async (req, res) => {
+  router.get('/clientes', authenticateToken, authorizeRole('clientes'), async (req, res) => {
     try {
       const clientes = await getAllClientes();
       res.status(200).json({ status: 'success', message: 'Clientes obtenidos exitosamente', data: clientes });
@@ -27,7 +28,7 @@ router.post('/clientes', async (req, res) => {
     }
   });
   
-  router.get('/clientes/:id', async (req, res) => {
+  router.get('/clientes/:id', authenticateToken, authorizeRole('clientes'), async (req, res) => {
     const id = parseInt(req.params.id, 10);
     try {
       const cliente = await getOneCliente(id);

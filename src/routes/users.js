@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole} from '../dbFunctions/db.js'
-import authenticateToken from '../middleware.js'
+import {authenticateToken, authorizeRole} from '../middleware.js'
 
 router.post('/register', async (req, res) => {
     const { username, password, email, role } = req.body;
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     }
 });
   
-router.get('/user/:id', async (req, res) => {
+router.get('/user/:id',authenticateToken, authorizeRole('usuarios'), async (req, res) => {
     const id = req.params.id
     try {
       const user = await getUserById(id)
@@ -52,7 +52,7 @@ router.get('/user/:id', async (req, res) => {
       res.status(500).json({ status: 'failed', error: error.message })
     }
   })
-router.get('/users', async (req, res) => {
+router.get('/users',authenticateToken, authorizeRole('usuarios'), async (req, res) => {
     try {
       const users = await getUsers()
       if (users !== 'No Users found.') {
@@ -110,7 +110,7 @@ router.put('/user/:id', async (req, res) => {
 });
 
 // Cambiar rol de usuario
-router.put('/user/:id/role', async (req, res) => {
+router.put('/user/:id/role',authenticateToken, authorizeRole('usuarios'), async (req, res) => {
   const id = req.params.id;
   const { role } = req.body;
   

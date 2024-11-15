@@ -1,4 +1,5 @@
 import express from 'express';
+import { authenticateToken, authorizeRole } from '../middleware.js';
 
 // PRODUCTOS db_products
 import { getProductos, getVisibleProducts,getOcultoProducts, getProductById, 
@@ -7,7 +8,7 @@ import { getProductos, getVisibleProducts,getOcultoProducts, getProductById,
 const router = express.Router();
 
 // Obtener todos los productos
-router.get('/productos', async (req, res) => {
+router.get('/productos',authenticateToken, authorizeRole('productos'), async (req, res) => {
     try {
         const products = await getProductos();
         if (products !== 'No products found.') {
@@ -35,7 +36,7 @@ router.get('/catalogo', async (req, res) => {
 });
 
 // Obtener todos los productos ocultos
-router.get('/catalogooculto', async (req, res) => {
+router.get('/catalogooculto', authenticateToken, authorizeRole('productos'), async (req, res) => {
     try {
         const products = await getOcultoProducts();
         if (products !== 'No products found.') {
@@ -63,7 +64,7 @@ router.get('/productos/:productId', async (req, res) => {
 });
 
 // Ocultar un producto
-router.put('/productos/hide/:productId', async (req, res) => {
+router.put('/productos/hide/:productId',authenticateToken, authorizeRole('productos'), async (req, res) => {
     const productId = parseInt(req.params.productId, 10);
     try {
         await deleteProduct(productId);
@@ -73,7 +74,7 @@ router.put('/productos/hide/:productId', async (req, res) => {
     }
 });
 
-router.put('/productos/unhide/:productId', async (req, res) => {
+router.put('/productos/unhide/:productId',authenticateToken, authorizeRole('productos'), async (req, res) => {
     const productId = parseInt(req.params.productId, 10);
     try {
         await unhideProduct(productId);
@@ -84,7 +85,7 @@ router.put('/productos/unhide/:productId', async (req, res) => {
 });
 
 // Crear un nuevo producto
-router.post('/productos', async (req, res) => {
+router.post('/productos',authenticateToken, authorizeRole('productos'), async (req, res) => {
     const newProduct = req.body;
     try {
         const createdProduct = await createProduct(newProduct);
@@ -99,7 +100,7 @@ router.post('/productos', async (req, res) => {
 });
 
 // Actualizar un producto
-router.put('/productos/:productId', async (req, res) => {
+router.put('/productos/:productId',authenticateToken, authorizeRole('productos'), async (req, res) => {
     const id_producto = parseInt(req.params.productId, 10);
     const {nombre, marca, modelo, descripción, material, tipo_producto, 
         capacidad_min, capacidad_max, precio, disponibilidad} = req.body;
@@ -116,7 +117,7 @@ router.put('/productos/:productId', async (req, res) => {
 });
 
 // Actualizar disponibilidad de un producto
-router.put('/productos/disponibilidad/:productId', async (req, res) => {
+router.put('/productos/disponibilidad/:productId',authenticateToken, authorizeRole('productos'), async (req, res) => {
     const productId = parseInt(req.params.productId, 10);
     const { disponibilidad } = req.body;
     try {
