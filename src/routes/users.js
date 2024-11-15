@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     }
 });
   
-router.get('/user/:id',authenticateToken, authorizeRole('usuarios'), async (req, res) => {
+router.get('/user/:id', async (req, res) => {
     const id = req.params.id
     try {
       const user = await getUserById(id)

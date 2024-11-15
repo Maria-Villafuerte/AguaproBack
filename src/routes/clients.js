@@ -28,7 +28,7 @@ import { saveCliente, getAllClientes, getOneCliente, getOneClienteByUser,
     }
   });
   
-  router.get('/clientes/:id', authenticateToken, authorizeRole('clientes'), async (req, res) => {
+  router.get('/clientes/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     try {
       const cliente = await getOneCliente(id);
