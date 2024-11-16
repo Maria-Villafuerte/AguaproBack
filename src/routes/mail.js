@@ -8,7 +8,6 @@ import nodemailer from 'nodemailer';
 import { 
     getDepartamentoById, getServicioById
 } from '../dbFunctions/db_services.js';
-import { ids } from 'googleapis/build/src/apis/ids/index.js';
 
 // Configura el transportador
 let transporter = nodemailer.createTransport({
@@ -21,24 +20,29 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendEmail(mailto, subject, html, attachments) {
-    // Configura el contenido del correo con HTML
-    let mailOptions = {
+async function sendEmail(mailto, subject, html, attachments) {
+    const mailOptions = {
         from: 'aguatesaautomatizado@gmail.com',
         to: mailto,
         subject: subject,
         html: html,
-        attachments: attachments,        
+        attachments: attachments,
     };
 
-    // Enviar correo de confirmación
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log('Error al enviar el correo:', error);
-        } else {
-          console.log('Correo enviado:', info.response);
+    let attempts = 3;
+    while (attempts > 0) {
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log('Correo enviado exitosamente');
+            break;
+        } catch (error) {
+            attempts--;
+            console.error(`Error al enviar el correo. Intentos restantes: ${attempts}`);
+            if (attempts === 0) {
+                console.log('Error definitivo al enviar correo');
+            }
         }
-    })
+    }
 }
 
 router.post('/confirmacion/pedido', async (req, res) => {
