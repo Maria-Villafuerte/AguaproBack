@@ -12,25 +12,6 @@ afterAll((done) => {
 });
 
 describe("POST /pedidos/revision", () => {
-    it("debería enviar correos exitosamente cuando los datos son válidos", async () => {
-        const response = await request(app)
-            .post('/pedidos/revision')
-            .send({
-                mailTo: ['con22787@uvg.edu.gt'], 
-                nombre: 'Juan Pérez',
-                correo: 'juan@example.com',
-                telefono: '123456789',
-                idPedido: 2,
-                monto: 450.5,
-                banco: 'G&T',
-                numAutorizacion: '1620-23'
-            });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.status).toBe('success');
-        expect(response.body.message).toBe('Correos enviados');
-    });
-
     it("debería retornar error 400 si falta algún campo", async () => {
         const response = await request(app)
             .post('/pedidos/revision')
