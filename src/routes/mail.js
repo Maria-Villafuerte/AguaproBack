@@ -172,13 +172,18 @@ router.post('/solicitud/servicio', async (req, res) => {
     }
 });
 
-router.post('/pedidos/revision', async (req, res) => {
+router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
     const { mailTo, nombre, correo, telefono, idPedido, monto, banco, numAutorizacion } = req.body;
+    const file = req.file; // Aquí debe estar el archivo subido
 
     // Verificar que los campos requeridos estén presentes
     if (!mailTo || !nombre || !correo || !telefono || !idPedido || !monto || !banco || !numAutorizacion) {
         return res.status(400).json({ status: 'failed', error: 'Todos los campos son obligatorios' });
     }
+
+    if (!file) {
+        return res.status(400).send('No image shared.');
+      }
 
     try {
   
@@ -199,6 +204,8 @@ router.post('/pedidos/revision', async (req, res) => {
                     <li><strong>Número de autorización:</strong> ${numAutorizacion}</li>
                 </ul>
                 <br />
+                <p>Se adjunta imagen como comprobante de pago</p>
+                <br />
                 <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
             </div>
         `;
@@ -209,13 +216,23 @@ router.post('/pedidos/revision', async (req, res) => {
         }
   
         // Enviar correos a cada destinatario en el array `mailTo`
-        const emailPromises = mailTo.map((recipient) => sendEmail(recipient, subject, html));
+        const emailPromises = mailTo.map((recipient) => 
+            sendEmail(recipient, subject, html, {
+                filename: file.originalname,
+                path: file.path, // Ruta al archivo subido
+                cid: 'comprobante_pago' // ID para incrustar en el HTML si fuera necesario
+            }));
         await Promise.all(emailPromises);
-  
+
         res.status(200).json({ status: 'success', message: 'Correos enviados' });
     } catch (error) {
         console.error('Error al enviar los correos:', error);
         res.status(500).json({ status: 'failed', error: 'Error al enviar los correos' });
+    } finally {
+        // Elimina el archivo temporal después de usarlo
+        if (file && file.path) {
+            fs.unlinkSync(file.path);
+        }
     }
 });
 
