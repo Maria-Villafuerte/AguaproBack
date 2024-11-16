@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import multer from 'multer'; // Para manejar el archivo subido
 
 const router = express.Router();
 import nodemailer from 'nodemailer';
@@ -172,6 +173,9 @@ router.post('/solicitud/servicio', async (req, res) => {
         res.status(500).json({ status: 'failed', error: 'Error al enviar los correos' });
     }
 });
+
+// Configuración de multer para manejar archivos subidos en memoria
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
     const { mailTo, nombre, correo, telefono, idPedido, monto, banco, numAutorizacion } = req.body;
