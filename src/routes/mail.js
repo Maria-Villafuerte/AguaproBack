@@ -219,10 +219,8 @@ router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
                     <li><strong>Banco destino:</strong> ${banco}</li>
                     <li><strong>Número de autorización:</strong> ${numAutorizacion}</li>
                 </ul>
-                <br />
                 <p>Se adjunta imagen como comprobante de pago</p>
-                <br />
-                <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
+                
             </div>
         `;
     
