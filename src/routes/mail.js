@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import multer from 'multer'; // Para manejar el archivo subido
 
 const router = express.Router();
 import nodemailer from 'nodemailer';
@@ -6,7 +8,6 @@ import nodemailer from 'nodemailer';
 import { 
     getDepartamentoById, getServicioById
 } from '../dbFunctions/db_services.js';
-import { ids } from 'googleapis/build/src/apis/ids/index.js';
 
 // Configura el transportador
 let transporter = nodemailer.createTransport({
@@ -19,17 +20,29 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendEmail(mailto, subject, html) {
-    // Configura el contenido del correo con HTML
-    let mailOptions = {
+async function sendEmail(mailto, subject, html, attachments) {
+    const mailOptions = {
         from: 'aguatesaautomatizado@gmail.com',
         to: mailto,
         subject: subject,
-        html: html
+        html: html,
+        attachments: attachments,
     };
 
-    // Enviar correo de confirmación
-    transporter.sendMail(mailOptions)
+    let attempts = 3;
+    while (attempts > 0) {
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log('Correo enviado exitosamente');
+            break;
+        } catch (error) {
+            attempts--;
+            console.error(`Error al enviar el correo. Intentos restantes: ${attempts}`);
+            if (attempts === 0) {
+                console.log('Error definitivo al enviar correo');
+            }
+        }
+    }
 }
 
 router.post('/confirmacion/pedido', async (req, res) => {
@@ -172,13 +185,21 @@ router.post('/solicitud/servicio', async (req, res) => {
     }
 });
 
-router.post('/pedidos/revision', async (req, res) => {
+// Configuración de multer para manejar archivos subidos en memoria
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
     const { mailTo, nombre, correo, telefono, idPedido, monto, banco, numAutorizacion } = req.body;
+    const file = req.file; // Aquí debe estar el archivo subido
 
     // Verificar que los campos requeridos estén presentes
     if (!mailTo || !nombre || !correo || !telefono || !idPedido || !monto || !banco || !numAutorizacion) {
         return res.status(400).json({ status: 'failed', error: 'Todos los campos son obligatorios' });
     }
+
+    if (!file) {
+        return res.status(400).send('No image shared.');
+      }
 
     try {
   
@@ -198,8 +219,8 @@ router.post('/pedidos/revision', async (req, res) => {
                     <li><strong>Banco destino:</strong> ${banco}</li>
                     <li><strong>Número de autorización:</strong> ${numAutorizacion}</li>
                 </ul>
-                <br />
-                <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
+                <p>Se adjunta imagen como comprobante de pago</p>
+                
             </div>
         `;
     
@@ -209,13 +230,23 @@ router.post('/pedidos/revision', async (req, res) => {
         }
   
         // Enviar correos a cada destinatario en el array `mailTo`
-        const emailPromises = mailTo.map((recipient) => sendEmail(recipient, subject, html));
+        const emailPromises = mailTo.map((recipient) => 
+            sendEmail(recipient, subject, html, {
+                filename: file.originalname,
+                path: file.path, // Ruta al archivo subido
+                cid: 'comprobante_pago' // ID para incrustar en el HTML si fuera necesario
+            }));
         await Promise.all(emailPromises);
-  
+
         res.status(200).json({ status: 'success', message: 'Correos enviados' });
     } catch (error) {
         console.error('Error al enviar los correos:', error);
         res.status(500).json({ status: 'failed', error: 'Error al enviar los correos' });
+    } finally {
+        // Elimina el archivo temporal después de usarlo
+        if (file && file.path) {
+            fs.unlinkSync(file.path);
+        }
     }
 });
 
