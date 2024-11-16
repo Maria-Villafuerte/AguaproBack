@@ -21,17 +21,24 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendEmail(mailto, subject, html) {
+export async function sendEmail(mailto, subject, html, attachments) {
     // Configura el contenido del correo con HTML
     let mailOptions = {
         from: 'aguatesaautomatizado@gmail.com',
         to: mailto,
         subject: subject,
-        html: html
+        html: html,
+        attachments: attachments,        
     };
 
     // Enviar correo de confirmación
-    transporter.sendMail(mailOptions)
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error al enviar el correo:', error);
+        } else {
+          console.log('Correo enviado:', info.response);
+        }
+    })
 }
 
 router.post('/confirmacion/pedido', async (req, res) => {
