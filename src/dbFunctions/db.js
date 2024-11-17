@@ -95,3 +95,15 @@ export async function updateUserRole(id, role) {
     throw error;
   }
 }
+
+// Buscar usuario segun nombre y correo
+export async function checkUser(username, mail) {
+  try {
+    const sql = 'SELECT id FROM users WHERE username = $1 AND email = $2';
+    const result = await conn.query(sql, [username, mail]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  } catch (error) {
+    console.error('Error al verificar usuario:', error);
+    throw error;
+  }
+}
