@@ -261,13 +261,15 @@ router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
             return res.status(400).json({ status: 'failed', error: 'Uno o más correos electrónicos son inválidos' });
         }
   
+        // Construir los adjuntos desde el buffer
+        const attachment = {
+            filename: `pago_pedido${idPedido}`,
+            content: file.buffer, // Usar el buffer en lugar de la ruta
+            contentType: file.mimetype, // Asegurarse de enviar el tipo MIME correcto
+        };
+
         // Enviar correos a cada destinatario en el array `mailTo`
-        const emailPromises = mailTo.map((recipient) => 
-            sendEmail(recipient, subject, html, {
-                filename: file.originalname,
-                path: file.path, // Ruta al archivo subido
-                cid: 'comprobante_pago' // ID para incrustar en el HTML si fuera necesario
-            }));
+        const emailPromises = mailTo.map((recipient) => sendEmail(recipient, subject, html, [attachment]));
         await Promise.all(emailPromises);
 
         res.status(200).json({ status: 'success', message: 'Correos enviados' });
