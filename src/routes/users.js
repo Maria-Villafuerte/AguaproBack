@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole, generateAndSendRecoveryCode, verifyRecoveryCode,changePassword} from '../dbFunctions/db.js'
+import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole} from '../dbFunctions/db.js'
 import {authenticateToken, authorizeRole} from '../middleware.js'
 
 router.post('/register', async (req, res) => {
@@ -118,6 +118,48 @@ router.put('/user/:id/role',authenticateToken, authorizeRole('usuarios'), async 
     const result = await updateUserRole(id, role);
     if (result) {
       res.status(200).json({ status: 'success', message: 'User role updated successfully.' });
+    } else {
+      res.status(404).json({ status: 'failed', message: 'User not found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Verificar de usuario y correo
+router.get('/verify/:username/:mail', async (req, res) => {
+  const { username, mail } = req.params;
+  
+  if (!username || !mail) {
+    return res.status(400).json({ status: 'failed', message: 'Usuario y correo requeridos.' });
+  }  
+
+  try {
+    const result = await checkUser(username, mail);
+    if (result) {
+      const userId = result.id;
+      res.status(200).json({ status: 'success', message: 'Valid user', data: userId });
+    } else {
+      res.status(404).json({ status: 'failed', message: 'User not found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Verificar de usuario y correo
+router.get('/verify/:username/:mail', async (req, res) => {
+  const { username, mail } = req.params;
+  
+  if (!username || !mail) {
+    return res.status(400).json({ status: 'failed', message: 'Usuario y correo requeridos.' });
+  }  
+
+  try {
+    const result = await checkUser(username, mail);
+    if (result) {
+      const userId = result.id;
+      res.status(200).json({ status: 'success', message: 'Valid user', data: userId });
     } else {
       res.status(404).json({ status: 'failed', message: 'User not found.' });
     }
