@@ -127,4 +127,13 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla Códigos de Recuperación
+CREATE TABLE RecoveryCodes (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  recovery_code VARCHAR(50) NOT NULL,
+  expiration_time TIMESTAMP NOT NULL,
+  used BOOLEAN DEFAULT FALSE, -- Para marcar si el código ya fue usado
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
 

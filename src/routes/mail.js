@@ -20,7 +20,7 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-async function sendEmail(mailto, subject, html, attachments) {
+export async function sendEmail(mailto, subject, html, attachments) {
     const mailOptions = {
         from: 'aguatesaautomatizado@gmail.com',
         to: mailto,
