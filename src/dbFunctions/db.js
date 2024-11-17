@@ -135,7 +135,7 @@ export async function generateAndSendRecoveryCode(email) {
     await conn.query(deleteOldCodes, [user.id]);
 
     // Generar un código de recuperación único
-    const recoveryCode = crypto.randomBytes(20).toString('hex'); // Generar un código aleatorio
+    const recoveryCode = crypto.randomBytes(6).toString('hex'); // Generar un código aleatorio
     const expirationTime = new Date(Date.now() + 20 * 60 * 1000); // Código válido por 20 minutos
 
     // Guardar el nuevo código de recuperación en la base de datos
@@ -185,6 +185,9 @@ export async function verifyRecoveryCode(email, recoveryCode) {
     if (currentTime > new Date(recoveryRecord.expiration_time)) {
       throw new Error('Recovery code has expired.');
     }
+    // Marcar el código como usado
+    const updateRecoveryCodeSql = 'UPDATE RecoveryCodes SET used = TRUE WHERE user_id = $1 AND recovery_code = $2';
+    await conn.query(updateRecoveryCodeSql, [user.id, recoveryCode]);
 
     // Marcar el código como usado solo al cambiar la contraseña
     return { status: 'success', message: 'Recovery code verified.' };
@@ -205,7 +208,7 @@ export async function changePassword(email, recoveryCode, newPassword) {
       throw new Error('No user found with that email.');
     }
 
-    const sql = 'SELECT * FROM RecoveryCodes WHERE user_id = $1 AND recovery_code = $2 AND used = FALSE';
+    const sql = 'SELECT * FROM RecoveryCodes WHERE user_id = $1 AND recovery_code = $2 AND used = TRUE';
     const recoveryResult = await conn.query(sql, [user.id, recoveryCode]);
 
     if (recoveryResult.rows.length === 0) {
@@ -228,9 +231,10 @@ export async function changePassword(email, recoveryCode, newPassword) {
     const updatePasswordSql = 'UPDATE users SET password_hash = $1 WHERE id = $2';
     await conn.query(updatePasswordSql, [hashedPassword, user.id]);
 
-    // Marcar el código como usado
-    const updateRecoveryCodeSql = 'UPDATE RecoveryCodes SET used = TRUE WHERE user_id = $1 AND recovery_code = $2';
-    await conn.query(updateRecoveryCodeSql, [user.id, recoveryCode]);
+    // Eliminar el código de la base de datos después de usarlo
+    const deleteRecoveryCodeSql = 'DELETE FROM RecoveryCodes WHERE user_id = $1 AND recovery_code = $2';
+    await conn.query(deleteRecoveryCodeSql, [user.id, recoveryCode]);
+
 
     return { status: 'success', message: 'Password changed successfully.' };
   } catch (error) {
