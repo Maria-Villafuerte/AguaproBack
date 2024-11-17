@@ -45,11 +45,15 @@ async function sendEmail(mailto, subject, html, attachments) {
     }
 }
 
+// PARA LOS CLIENTES
 router.post('/confirmacion/pedido', async (req, res) => {
     const { mailto } = req.body;
 
     let subject = '¡Gracias por tu compra en Aguatesa en línea!'
-    let html = '<h1>Gracias por comprar en Aguatesa.</h1><p>Le daremos seguimiento a tu pedido y nos pondremos en contacto para su envío. Si tienes alguna duda o inconveniente no dudes en contactarnos.</p><footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
+    let html = `<h1>Gracias por comprar en Aguatesa.</h1>
+    <p>Le daremos seguimiento a tu pedido y nos pondremos en contacto para su envío. Si tienes alguna duda o inconveniente no dudes en contactarnos.</p>
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>
+    <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>`
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -69,7 +73,10 @@ router.post('/confirmacion/servicio', async (req, res) => {
     const { mailto } = req.body;
 
     let subject = '¡Recibimos tu solicitud de servicio!'
-    let html = '<h1>¡Gracias por interesarte en Aguatesa!</h1><p>Tu solicitud será procesada por uno de nuestros vendedores y deberías de recibir un correo de seguimiento en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p><footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>'
+    let html = `<h1>¡Gracias por interesarte en Aguatesa!</h1>
+    <p>Tu solicitud será procesada por uno de nuestros vendedores y deberías de recibir un correo de seguimiento en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p>
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>
+    <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>`
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -92,7 +99,8 @@ router.post('/cancelacion', async (req, res) => {
     let html = `<h1>Tu pedido ha sido cancelado.</h1>
     <p>Lametablemente debido a <Strong>${razon}</Strong> tu pedido fue cancelado. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p>
     <footer><strong>Teléfono:</strong> (502) 6670-3030 <br />
-    <strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>`
+    <strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>
+    <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>`
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -114,7 +122,8 @@ router.post('/pedido/pago', async (req, res) => {
     let subject = 'Gracias por tu compra en Aguatesa en línea'
     let html = `<h1>¡Gracias por comprar en Aguatesa!</h1><p>Tendremos que confirmar que ${metodo} haya sido procesada correctamente. 
     Esto tomará un par de minutos y deberías de recibir un correo electrónico de confirmación en breve. Si tienes alguna duda o inconveniente no dudes en contactarnos. </p>
-    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>`
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>
+    <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>`
 
     // Validar el correo electrónico
     if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
@@ -130,6 +139,31 @@ router.post('/pedido/pago', async (req, res) => {
     }
 });
 
+router.post('/password', async (req, res) => {
+    const { mailto, codigo } = req.body;
+
+    let subject = 'Cambio de contraseña. Aguatesa en línea'
+    let html = ` <p>Utiliza este código para poder hacer el cambio de tu contraseña: </p>
+    <h1>${codigo}</h1> </br>
+    <p>Si tienes algún problema no dudes en contactarnos</p>
+    <footer><strong>Teléfono:</strong> (502) 6670-3030 <br /><strong>Correo:</strong> ventas@aguatesa.com <br />ventas2@aguatesa.com</footer>
+    <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>`
+
+    // Validar el correo electrónico
+    if (!mailto || !/\S+@\S+\.\S+/.test(mailto)) {
+        return res.status(400).send('Correo electrónico inválido');
+    }
+
+    try {
+        await sendEmail(mailto, subject, html);
+        res.status(200).send('Correo enviado');
+    } catch (error) {
+        console.error(error); // Log del error en consola
+        res.status(500).send('Error al enviar el correo');
+    }
+});
+
+// PARA LOS VENDEDORES
 router.post('/solicitud/servicio', async (req, res) => {
     const { mailTo, nombre, correo, telefono, empresa, idDepartamento, idServicio, mensaje } = req.body;
 
@@ -165,7 +199,6 @@ router.post('/solicitud/servicio', async (req, res) => {
                     <li><strong>Mensaje:</strong><br>${mensaje}</li>
                 </ul>
                 <br />
-                <p style="font-size: 0.9em; color: #777;">Este mensaje fue generado automáticamente, por favor no responda.</p>
             </div>
         `;
     
@@ -220,7 +253,6 @@ router.post('/pedidos/revision', upload.single('file'), async (req, res) => {
                     <li><strong>Número de autorización:</strong> ${numAutorizacion}</li>
                 </ul>
                 <p>Se adjunta imagen como comprobante de pago</p>
-                
             </div>
         `;
     
