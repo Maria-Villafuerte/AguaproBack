@@ -14,7 +14,7 @@ afterAll((done) => {
 describe('Mailer API tests for new password', () => {
     it('should send an email with the code provided', async () => {
         const response = await request(app)
-            .post('/contraseña/olvidada')
+            .post('/password')
             .send({ mailto: 'con22787@uvg.edu.gt', codigo: '5578'}); 
 
         expect(response.status).toBe(200);
@@ -23,7 +23,7 @@ describe('Mailer API tests for new password', () => {
 
     it('should return 400 for invalid email', async () => {
         const response = await request(app)
-            .post('/contraseña/olvidada')
+            .post('/password')
             .send({ mailto: 'invalid-email', codigo: '5578' });
 
         expect(response.status).toBe(400);

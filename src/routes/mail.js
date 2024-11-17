@@ -139,7 +139,7 @@ router.post('/pedido/pago', async (req, res) => {
     }
 });
 
-router.post('/contraseña/olvidada', async (req, res) => {
+router.post('/password', async (req, res) => {
     const { mailto, codigo } = req.body;
 
     let subject = 'Cambio de contraseña. Aguatesa en línea'
