@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole} from '../dbFunctions/db.js'
+import { registerUser, loginUser, getUserById, getUsers, deleteUser, updateUser, updateUserRole, generateAndSendRecoveryCode, verifyRecoveryCode,changePassword} from '../dbFunctions/db.js'
 import {authenticateToken, authorizeRole} from '../middleware.js'
 
 router.post('/register', async (req, res) => {
@@ -126,5 +126,48 @@ router.put('/user/:id/role',authenticateToken, authorizeRole('usuarios'), async 
   }
 });
 
+// Endpoint para generar el código de recuperación
+router.post('/passwordrecovery', async (req, res) => {
+  const { email } = req.body;
 
+  try {
+    // Validar el correo electrónico
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      return res.status(400).json({ status: 'failed', error: 'Correo electrónico inválido' });
+    }
+
+    // Llamar a la función para generar el código y enviarlo por correo
+    await generateAndSendRecoveryCode(email);
+    res.status(200).json({
+      status: 'success',
+      message: 'Recovery code sent to email.'
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Endpoint para verificar el código de recuperación
+router.post('/verifyrecoverycode', async (req, res) => {
+  const { email, recoveryCode } = req.body;
+
+  try {
+    const response = await verifyRecoveryCode(email, recoveryCode);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({ status: 'failed', error: error.message });
+  }
+});
+
+// Endpoint para cambiar la contraseña
+router.post('/changepassword', async (req, res) => {
+  const { email, recoveryCode, newPassword } = req.body;
+
+  try {
+    const response = await changePassword(email, recoveryCode, newPassword);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({ status: 'failed', error: error.message });
+  }
+});
 export default router;
