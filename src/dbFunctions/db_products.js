@@ -118,19 +118,13 @@ export async function createProduct(product) {
     const { nombre, marca, modelo, descripción, material, tipo_producto, 
       capacidad_min, capacidad_max, precio, disponibilidad
      } = product;
-    // Obtener el número de filas en la tabla
-    const result = await conn.query('SELECT COUNT(*) AS count FROM Productos');
-    const rowCount = parseInt(result.rows[0].count, 10);
-  
-    // Formar un nuevo índice basado en el número de filas
-    const producto = rowCount + 1;
   
     const query = `
-      INSERT INTO Productos (id_producto, nombre, marca, modelo, descripción, material, tipo_producto, cap_min, cap_max, precio, disponibilidad)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      INSERT INTO Productos (nombre, marca, modelo, descripción, material, tipo_producto, cap_min, cap_max, precio, disponibilidad)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `;
-    const values = [producto, nombre, marca, modelo, descripción, material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad];
+    const values = [nombre, marca, modelo, descripción, material, tipo_producto, capacidad_min, capacidad_max, precio, disponibilidad];
     try {
       const result = await conn.query(query, values);
       return result.rows[0];

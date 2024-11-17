@@ -30,16 +30,10 @@ export async function addTipoProducto(tipo) {
       console.log('Esta categoría de producto ya existe.')
       return exists;
     }
-    // Obtener el número de filas en la tabla
-    const result = await conn.query('SELECT COUNT(*) AS count FROM Tipo_producto');
-    const rowCount = parseInt(result.rows[0].count, 10);
-
-    // Formar un nuevo índice basado en el número de filas
-    const id_tipo = rowCount + 1;
 
     await conn.query(
-      "INSERT INTO Tipo_producto (id_tipo, nombre) VALUES ($1, $2)", 
-      [id_tipo, tipo]
+      "INSERT INTO Tipo_producto (nombre) VALUES ($1)", 
+      [tipo]
     );
     return id_tipo;
   } catch (error) {

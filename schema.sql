@@ -1,12 +1,12 @@
 -- Tabla Tipo_producto
 CREATE TABLE Tipo_producto (
-    id_tipo INT PRIMARY KEY,
+    id_tipo SERIAL PRIMARY KEY,
     nombre VARCHAR(30)
 );
 
 -- Tabla Productos
 CREATE TABLE Productos (
-    id_producto INT PRIMARY KEY,
+    id_producto SERIAL PRIMARY KEY,
     clave VARCHAR(50),  -- Nuevo atributo agregado
     nombre VARCHAR(30) NOT NULL,
     marca VARCHAR(50) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE Departamentos (
 
 -- Tabla Clientes
 CREATE TABLE Clientes (
-    id_cliente INT PRIMARY KEY,
+    id_cliente SERIAL PRIMARY KEY,
     nombre VARCHAR(50),
     direccion VARCHAR(100),
     telefono VARCHAR(8),
@@ -62,13 +62,13 @@ CREATE TABLE Clientes (
 
 -- Tabla Tipos_estados
 CREATE TABLE Tipos_estados (
-    id_estado INT PRIMARY KEY,
+    id_estado SERIAL PRIMARY KEY,
     nombre VARCHAR(50)
 );
 
 -- Tabla Pedidos
 CREATE TABLE Pedidos (
-    id_pedido INT PRIMARY KEY,
+    id_pedido SERIAL PRIMARY KEY,
     estatus INT,
     direccion VARCHAR(100),
     FOREIGN KEY (estatus) REFERENCES Tipos_estados(id_estado)
@@ -76,7 +76,7 @@ CREATE TABLE Pedidos (
 
 -- Tabla Codigo
 CREATE TABLE Codigos (
-    id_codigo INT PRIMARY KEY,
+    id_codigo SERIAL PRIMARY KEY,
     num_codigo VARCHAR(10),
     usado INT,
     descuento DOUBLE PRECISION,
@@ -88,6 +88,7 @@ CREATE TABLE Codigos (
 
 -- Tabla Factura
 CREATE TABLE Factura (
+    id_factura SERIAL PRIMARY KEY,
     id_cliente INT,
     id_pedido INT,
     nit_empresa VARCHAR(10),

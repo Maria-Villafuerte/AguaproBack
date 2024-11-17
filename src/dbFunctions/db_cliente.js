@@ -8,17 +8,10 @@ export async function saveCliente(nombre, direccion, telefono, nit, user_referen
     // Start a transaction
     await conn.query('BEGIN');
 
-    // Get the maximum id_cliente
-    const maxIdResult = await conn.query('SELECT MAX(id_cliente) FROM Clientes');
-    const maxId = maxIdResult.rows[0].max || 0;
-
-    // Increment the id
-    const newId = maxId + 1;
-
     // Insert the new client with the new id
-    const sql = `INSERT INTO Clientes (id_cliente, nombre, direccion, telefono, nit, user_reference, email) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
-    const values = [newId, nombre, direccion, telefono, nit, user_reference, email];
+    const sql = `INSERT INTO Clientes (nombre, direccion, telefono, nit, user_reference, email) 
+    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+    const values = [nombre, direccion, telefono, nit, user_reference, email];
     const result = await conn.query(sql, values);
 
     // Commit the transaction

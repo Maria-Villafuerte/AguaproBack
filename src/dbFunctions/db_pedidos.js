@@ -9,14 +9,10 @@ export async function savePurchase(clienteId, productos, nitEmpresa, idDescuento
       throw new Error('Datos de entrada inválidos');
     }
 
-    const maxIdResult = await conn.query('SELECT MAX(id_pedido) FROM Pedidos');
-    const maxId = maxIdResult.rows[0].max || 0;
-    const newPedidoId = maxId + 1;
-
     // Insertar en Pedidos
     const pedidoResult = await conn.query(
-      'INSERT INTO Pedidos (id_pedido, estatus, direccion) VALUES ($1, $2, $3) RETURNING id_pedido',
-      [newPedidoId, 1, direccion]
+      'INSERT INTO Pedidos (estatus, direccion) VALUES ($1, $2) RETURNING id_pedido',
+      [1, direccion]
     );
     const pedidoId = pedidoResult.rows[0].id_pedido;
 
