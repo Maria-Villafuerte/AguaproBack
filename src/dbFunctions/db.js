@@ -135,7 +135,7 @@ export async function generateAndSendRecoveryCode(email) {
     await conn.query(deleteOldCodes, [user.id]);
 
     // Generar un código de recuperación único
-    const recoveryCode = crypto.randomBytes(20).toString('hex'); // Generar un código aleatorio
+    const recoveryCode = crypto.randomBytes(6).toString('hex'); // Generar un código aleatorio
     const expirationTime = new Date(Date.now() + 20 * 60 * 1000); // Código válido por 20 minutos
 
     // Guardar el nuevo código de recuperación en la base de datos
