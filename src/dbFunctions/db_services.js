@@ -1,7 +1,4 @@
 import conn from '../conn.js'
-import { 
-  getDepartamentoById, getServicioById
-} from '../dbFunctions/db_services.js';
 import { sendEmail } from '../routes/mail.js'; 
 
 export async function getSolicitudes() {
@@ -74,7 +71,7 @@ export async function createRequest(solicitud) {
             <br />
         </div>
     `;
-    const mailto = 'con22787@uvg.edu.gt'
+    const mailto = 'ventas4@aguatesa.com'
     try {
       const result = await conn.query(query, values);
       await sendEmail(mailto, subject, html);
