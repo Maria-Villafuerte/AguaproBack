@@ -1,4 +1,5 @@
 import conn from '../conn.js'
+import { sendEmail } from '../routes/mail.js'; 
 
 export async function getSolicitudes() {
     const result = await conn.query(`SELECT * FROM solicitud_servicio 
@@ -40,9 +41,42 @@ export async function createRequest(solicitud) {
       RETURNING id_solicitud
     `;
     const values = [nombre, correo, telefono, empresa, departamento, tipo_servicio, mensaje];
+
+    // ENVIAR CORREO A VENTAS CON LA INFORMACIÓN
+    const name_departamento = await getDepartamentoById(departamento);
+    const name_servicio = await getServicioById(tipo_servicio);
+
+    if (!name_departamento) {
+        return res.status(404).json({ status: 'failed', error: 'Department not found' });
+    }
+    if (!name_servicio) {
+        return res.status(404).json({ status: 'failed', error: 'Service not found' });
+    }
+
+    // Configura el contenido del correo
+    const subject = 'Hay una nueva solicitud de servicio';
+    const html = `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+            <h1>Hemos recibido una nueva solicitud de servicio</h1>
+            <h3>Estos son los datos recibidos:</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li><strong>Cliente:</strong> ${nombre}</li>
+                <li><strong>Correo:</strong> ${correo}</li>
+                <li><strong>Teléfono:</strong> ${telefono}</li>
+                <li><strong>Empresa:</strong> ${empresa}</li>
+                <li><strong>Departamento:</strong> ${name_departamento.nombre}</li>
+                <li><strong>Servicio solicitado:</strong> ${name_servicio.nombre}</li>
+                <li><strong>Mensaje:</strong><br>${mensaje}</li>
+            </ul>
+            <br />
+        </div>
+    `;
+    const mailto = 'ventas4@aguatesa.com'
     try {
       const result = await conn.query(query, values);
+      await sendEmail(mailto, subject, html);
       return result.rows[0];
+      
     } catch (error) {
       console.error('Error en la consulta SQL:', error);
       throw error;
